@@ -1,0 +1,7 @@
+@import 'bootstrap/bootstrap.scss';
+@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@300;400&family=Kaushan+Script&display=swap');
+
+table {
+  @extend .table !optional;
+  @extend .table-hover !optional;
+}

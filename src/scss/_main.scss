@@ -1,0 +1,172 @@
+body {
+  font-family: "Josefin Sans", sans-serif;
+}
+
+h1 {
+  font-weight: 300;
+}
+
+a {
+  text-decoration: none;
+}
+
+.main-layout {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+}
+
+.hidden {
+  display: none;
+}
+
+.navbar-brand {
+  font-family: "Kaushan Script", cursive;
+  font-size: xx-large;
+  font-weight: 500;
+  color: #fd6c3f !important;
+  letter-spacing: 4px;
+}
+
+.message-text {
+  overflow: hidden;
+  resize: none;
+  // min-height: 45px;
+  ::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: transparent;
+  }
+}
+
+.api-key-text,
+.role-switch,
+.role-system,
+.message-delete {
+  user-select: none;
+  border: var(--bs-border-width) solid var(--bs-border-color) !important;
+}
+
+.api-key-text {
+  padding-right: 1rem !important;
+}
+
+.chat-box {
+  position: relative;
+  margin-top: 50px;
+  margin-bottom: 10px;
+  .role-switch,
+  .message-delete {
+    position: absolute;
+    top: -40px;
+    border-radius: 20px 20px 0px 0px;
+    height: 40px;
+    width: 40px;
+  }
+  .role-switch {
+  }
+  .message-delete {
+    right: 0;
+  }
+  .message-text {
+    border-radius: 0px 0px 5px 5px;
+  }
+}
+
+.api-key-text {
+  padding-right: 1rem !important;
+}
+.full-width {
+  width: 100%;
+  gap: 10px;
+}
+
+.message-delete {
+  font-size: 10px;
+  width: min-content;
+}
+
+#chatgpt-form div > label {
+  font-size: medium;
+}
+
+.role-switch {
+  cursor: pointer;
+  text-align: center;
+}
+
+.text-small {
+  font-size: 0.8rem !important;
+  line-height: 0rem !important;
+}
+
+.input-group .btn {
+  padding: 6px 3px !important;
+  border-radius: 0px !important;
+}
+
+#chatgpt-form {
+  textarea {
+    padding-top: 0.4rem !important;
+    border-radius: 0px !important;
+    outline: none !important;
+  }
+  input {
+    border-radius: 0px !important;
+  }
+}
+
+.message-delete {
+  min-width: 1rem !important;
+}
+
+.input-group-text {
+  border-radius: 0px !important;
+}
+
+pre {
+  background-color: #282a36;
+  padding: 1rem;
+}
+
+// loading ellipsis animation
+
+.loading:after {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+  -webkit-animation: ellipsis steps(4, end) 900ms infinite;
+  animation: ellipsis steps(4, end) 900ms infinite;
+  content: "\2026"; /* ascii code for the ellipsis character */
+  width: 0px;
+}
+
+@keyframes ellipsis {
+  to {
+    width: 1.25em;
+  }
+}
+
+@-webkit-keyframes ellipsis {
+  to {
+    width: 1.25em;
+  }
+}
+
+// end of loading ellipsis animation.
+
+.preview p:last-child {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.form-control:focus {
+  box-shadow: none !important;
+  border-color: #ced4da;
+}
