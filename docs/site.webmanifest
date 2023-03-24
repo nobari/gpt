@@ -1,6 +1,7 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "chatGPT",
+    "short_name": "chatGPT",
+    "start_url": "index.html",
     "icons": [
         {
             "src": "/android-chrome-192x192.png",
