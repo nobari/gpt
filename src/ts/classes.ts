@@ -1,3 +1,6 @@
+export const GLOBAL_CONFIGS = {
+  apiKey: ""
+}
 export class payloadRole {
   role: string;
   icon: string;
@@ -23,37 +26,20 @@ export class payloadMessage {
 export class chatGPT {
   model: string = 'gpt-4-0314' || "gpt-3.5-turbo";
   stream: boolean = true;
+  /**
+   * What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
+   */
+  temperature = 1;
   endPoint: string = 'https://api.openai.com/v1/chat/completions';
   payloadMessages: payloadMessage[];
-  apiKey: string;
   static roles = {
     system: new payloadRole('system', '🧠', 'sys', ''),
     user: new payloadRole('user', '👤', 'usr', 'Enter a user message here.'),
     assistant: new payloadRole('assistant', '🤖', 'ast', 'Enter an assistant message here.'),
   };
 
-  constructor();
-  constructor(apiKey: string);
-  constructor(apiKey: string, payloadMessages: payloadMessage[]);
-  constructor(apiKey: string, model: string, stream: boolean, endPoint: string, payloadMessages: payloadMessage[]);
-
-  constructor(...args: any[]) {
-    this.apiKey = '';
-    if (args.length === 0) {
-      this.apiKey = '';
-      this.payloadMessages = [];
-    } else if (args.length === 1) {
-      this.apiKey = args[0];
-      this.payloadMessages = [];
-    } else if (args.length === 2) {
-      this.apiKey = args[0];
-      this.payloadMessages = args[1];
-    } else {
-      this.model = args[0];
-      this.stream = args[1];
-      this.endPoint = args[2];
-      this.payloadMessages = args[3];
-    }
+  constructor() {
+    this.payloadMessages = [];
   }
 
   getRequestData() {
@@ -61,13 +47,58 @@ export class chatGPT {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
+        Authorization: `Bearer ${GLOBAL_CONFIGS.apiKey}`,
       },
       body: JSON.stringify({
         model: this.model,
         messages: this.payloadMessages,
         stream: this.stream,
+        temperature: this.temperature
       }),
     };
+  }
+}
+export class dallE {
+
+
+
+  /**
+   * The number of images to generate. Must be between 1 and 10.
+   */
+  n: number = 2
+
+  /**
+   * Defaults to 1024x1024
+   * The size of the generated images. Must be one of 256x256, 512x512, or 1024x1024.
+   */
+  size: string = "512x512"
+
+  endPoint: string = 'https://api.openai.com/v1/images/generations';
+  response_format = "b64_json"//"url"
+  generatedImgs = 0;
+  /**
+   * 
+   * @param prompt A text description of the desired image(s). The maximum length is 1000 characters.
+   * @returns 
+   */
+  async getImages(prompt: string) {
+    prompt = prompt.substring(0, 1000);
+    console.log("draw image:", prompt)
+    const res = await fetch(this.endPoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${GLOBAL_CONFIGS.apiKey}`,
+      },
+      body: JSON.stringify({
+        prompt,
+        size: this.size,
+        n: this.n,
+        response_format: this.response_format
+      }),
+    });
+    const data = (await res.json()).data;
+    console.log("result:", data);
+    return data.map((u: any) => "data:image/jpeg;base64," + u[this.response_format]);
   }
 }

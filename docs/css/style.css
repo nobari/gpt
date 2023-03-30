@@ -11686,6 +11686,12 @@ a {
 .chat-box .message-text {
   border-radius: 0px 0px 5px 5px;
 }
+.chat-box .message-text p {
+  white-space: pre-line;
+}
+.chat-box .draw-container {
+  flex-direction: column;
+}
 
 .api-key-text {
   padding-right: 1rem !important;
@@ -11717,7 +11723,6 @@ a {
 
 .input-group .btn {
   padding: 6px 3px !important;
-  border-radius: 0px !important;
 }
 
 #chatgpt-form textarea {
@@ -11762,6 +11767,11 @@ pre {
     width: 1.25em;
   }
 }
+textarea.form-control.message-text {
+  background-color: var(--bs-form-control-bg);
+  color: #fff;
+}
+
 .preview p:last-child {
   margin-bottom: 0 !important;
   padding-bottom: 0 !important;
@@ -11770,6 +11780,29 @@ pre {
 .form-control:focus {
   box-shadow: none !important;
   border-color: #ced4da;
+}
+
+.container {
+  width: 100vw;
+}
+
+.drawings .card {
+  margin-bottom: 5px;
+}
+.drawings .card .card-text {
+  text-align: center;
+}
+
+header {
+  text-align: center;
+  padding: 4px;
+}
+
+.btn-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  margin: 0 5px;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -1,4 +1,4 @@
-import { chatGPT } from './classes.js';
+import { chatGPT, dallE, GLOBAL_CONFIGS } from './classes.js';
 import { payloadMessage } from './classes.js';
 import { payloadRole } from './classes.js';
 import * as manageLS from './manageLocalStorage.js';
@@ -7,7 +7,8 @@ import { openAIChatComplete, stopStream } from './openAI.js';
 import * as exports from './export.js';
 import { decrypt, encrypt } from './cryptography.js';
 
-const chatGPTData = new chatGPT();
+const chatgpt = new chatGPT();
+const dalle = new dallE();
 
 const systemRole = chatGPT.roles.system.role;
 const userRole = chatGPT.roles.user.role;
@@ -37,11 +38,12 @@ const deleteMessageButtons = document.querySelectorAll('.message-delete') as Nod
 const textAreas = document.querySelectorAll('textarea') as NodeListOf<HTMLTextAreaElement>;
 const messagesContainer = document.querySelector('#messages-container') as HTMLDivElement;
 const addMessageButton = document.querySelector('#add-message') as HTMLButtonElement;
+const drawButtons = document.querySelectorAll('.draw-btn') as NodeListOf<HTMLButtonElement>;
 
 // initialize elements
-let apiKey = manageLS.getAPIKey();
+GLOBAL_CONFIGS.apiKey = manageLS.getAPIKey() || "";
 
-if (!apiKey) {
+while (!GLOBAL_CONFIGS.apiKey.length) {
   const key = window.prompt("ramz");
   try {
     if (key) {
@@ -50,7 +52,7 @@ if (!apiKey) {
       if (!api) {
         window.location.reload();
       } else {
-        apiKey = api;
+        GLOBAL_CONFIGS.apiKey = api;
         manageLS.setAPIKey(api);
       }
     } else {
@@ -65,6 +67,7 @@ textAreas.forEach(textAreaEventListeners);
 textAreas.forEach(utils.resizeTextarea);
 switchRoleButtons.forEach(switchRoleEventListeners);
 deleteMessageButtons.forEach(messageDeleteButtonEventListener);
+drawButtons.forEach(drawButtonEventListener);
 
 const textAreaDisplayProperties = textAreas[0].style.display;
 
@@ -103,6 +106,19 @@ function previewEventListeners(preview: HTMLDivElement) {
 addMessageButton.addEventListener('click', () => {
   addMessage();
 });
+function drawButtonEventListener(drawButton: HTMLButtonElement) {
+  drawButton.addEventListener('click', async (e) => {
+    if (e.target) {
+      const el = (e.target as any).closest(".chat-box");
+      if (!el) return;
+      const txt = el.querySelector("textarea.message-text").value;
+      const drawEl = el.querySelector(".draw-container .drawings");
+      drawButton.disabled = true;
+      await draw(txt, drawEl);
+      drawButton.disabled = false;
+    }
+  });
+}
 
 window.addEventListener('resize', () => {
   textAreas.forEach(utils.resizeTextarea);
@@ -162,6 +178,38 @@ chatGPTForm.addEventListener('submit', e => {
   submitForm(e);
 });
 
+
+async function draw(txt: string, drawEl: HTMLDivElement) {
+  console.log(txt, drawEl);
+  // const existingImgs = dalle.generatedImgs;// drawEl.querySelectorAll(".img-wrapper").length;
+  // const collectionId = Date.now();
+  const ids: string[] = [];
+  for (let i = 0; i < dalle.n; i++) {
+    const imgNum = ++dalle.generatedImgs;
+    const imgId = `img_${imgNum}`;
+    ids.push(imgId);
+    const el = document.createElement("div");
+    el.className = "col-md-6 img-wrapper";
+    el.innerHTML = `<div class="card"><img id="${imgId}" src="imgs/loading.gif" class="card-img-top" alt="image ${imgNum}:${txt}"><div class="card-body">
+    <p class="card-text">
+    <button class="btn btn-outline-success btn-circle" type="button" onclick="downloadImage(this.parentElement.parentElement.parentElement);"><span class="fas fa-download"></span></button>
+    ${imgNum}
+    <button class="btn btn-outline-danger btn-circle" type="button" onclick="this.parentElement.parentElement.parentElement.parentElement.remove();"><span class="fas fa-trash-alt"></span></button>
+    </p></div></div>`
+    drawEl.append(el);
+  }
+  try {
+    const images = await dalle.getImages(txt);
+    if (!images.length) throw "no image";
+    let imagesId = 0;
+    ids.forEach(id => {
+      const img = drawEl.querySelector(`img#${id}`) as HTMLImageElement;
+      img.src = images[imagesId++];
+    })
+  } catch (e) {
+    console.log("error images:", e);
+  }
+}
 function addMessage(message = '', setAsAssistant = false) {
   const allRoles = document.querySelectorAll('.role-switch');
   const lastRoleType = allRoles[allRoles.length - 1]?.getAttribute('data-role-type') || assistantRole;
@@ -198,6 +246,21 @@ function addMessage(message = '', setAsAssistant = false) {
   textAreaEventListeners(messageInput);
 
   inputGroup.append(switchRoleButton, messageInput, deleteMessageButton);
+
+  const drawContainer = document.createElement("div");
+  drawContainer.className = "input-group draw-container";
+  const drawBtn = document.createElement("button");
+  drawBtn.type = "button";
+  drawBtn.className = "btn form-button draw-btn";
+  drawBtn.title = "Draw a pic";
+  drawBtn.innerText = "Draw 🖼️";
+  const drawings = document.createElement("div");
+  drawings.className = "drawings row";
+  drawContainer.append(drawings);
+  drawContainer.append(drawBtn);
+  inputGroup.append(drawContainer);
+  drawButtonEventListener(drawBtn);
+
   messagesContainer.append(inputGroup);
 
   messageInput.value = message;
@@ -226,7 +289,7 @@ async function submitForm(e: Event) {
   if (messages.length === 0) return;
   let targetTextArea = null;
   let apiResponse = null;
-  if (!apiKey) {
+  if (!GLOBAL_CONFIGS.apiKey.length) {
     window.location.reload();
     return;
   }
@@ -236,9 +299,8 @@ async function submitForm(e: Event) {
     spinnerDiv.querySelector('button')?.addEventListener('click', () => {
       stopStream();
     });
-    chatGPTData.apiKey = apiKey;
-    chatGPTData.payloadMessages = messages;
-    apiResponse = await openAIChatComplete(chatGPTData, targetTextArea);
+    chatgpt.payloadMessages = messages;
+    apiResponse = await openAIChatComplete(chatgpt, targetTextArea);
   } catch (error) {
     if (targetTextArea) targetTextArea.value = 'Error fetching response.\n\n' + error;
   } finally {
@@ -258,7 +320,7 @@ downloadHTMLButton.addEventListener('click', exports.downloadHTML);
 const downloadPythonButton = document.getElementById('downloadPython') as HTMLButtonElement;
 
 downloadPythonButton.addEventListener('click', e => {
-  exports.downloadPython(getMessages(), chatGPTData.model);
+  exports.downloadPython(getMessages(), chatgpt.model);
 });
 // const enc = encrypt("hello", "key");
 // const dec = decrypt(enc, "key");

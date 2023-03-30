@@ -4,7 +4,7 @@ export function resizeTextarea(textarea: HTMLTextAreaElement) {
   textarea.style.height = 'auto';
   textarea.style.height = `${textarea.scrollHeight}px`;
   textarea.rows = textarea.value.split('\n').length > 1 ? textarea.value.split('\n').length : 1;
-  ensureButtonInView();
+  // ensureButtonInView();
 }
 
 function ensureButtonInView() {
@@ -19,7 +19,10 @@ function ensureButtonInView() {
 
 export function deleteMessage(messageToDelete: HTMLButtonElement) {
   try {
-    messageToDelete.parentElement?.remove();
+    if (document.querySelectorAll(".chat-box").length > 1)
+      messageToDelete.parentElement?.remove();
+    else
+      window.alert("no more message to remove");
   } catch (err) {
     console.error('Error deleting message:', err);
   }

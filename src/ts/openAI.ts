@@ -1,4 +1,4 @@
-import { chatGPT } from './classes.js';
+import { chatGPT, dallE } from './classes.js';
 import { resizeTextarea, getPreviewHtml } from './utils.js';
 
 let reader: ReadableStreamDefaultReader | undefined;
