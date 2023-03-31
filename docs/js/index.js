@@ -36,7 +36,7 @@ const drawButtons = document.querySelectorAll('.draw-btn');
 // initialize elements
 GLOBAL_CONFIGS.apiKey = manageLS.getAPIKey() || "";
 while (!GLOBAL_CONFIGS.apiKey.length) {
-    const key = window.prompt("ramz");
+    const key = window.prompt("pass");
     try {
         if (key) {
             const enced = "U2FsdGVkX1/9lgY/dvhQbDC4jQW5jZo0XI6bBS9KzorJka0uOSjLYmn/LwuA3V9L6PERQZbvEoMwI1KPDCWY16AU1wgeOboU6RJRTk5D5DQ=";
