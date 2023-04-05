@@ -43,6 +43,14 @@ export class chatGPT {
   }
 
   getRequestData() {
+    try {
+      //@ts-ignore
+      gtag('event', 'user_submit', {
+        'event_category': 'user_input',
+        'event_label': 'textbox_content',
+        'value': this.payloadMessages[this.payloadMessages.length - 1].content // Pass the content of the textbox as the event value
+      });
+    } catch (e) { console.log("user gtag error:", e) }
     return {
       method: 'POST',
       headers: {

@@ -79,53 +79,87 @@ function createPreviewDiv(textArea) {
     previewEventListeners(previewDiv);
     return previewDiv;
 }
+function showTextArea(preview, textArea) {
+    console.log("showTextArea");
+    textArea.classList.remove('hidden');
+    textArea.style.display = textAreaDisplayProperties;
+    // utils.resizeTextarea(textArea);
+    textArea.focus();
+    preview.style.display = 'none';
+}
 function previewEventListeners(preview) {
     const textArea = preview.parentElement?.querySelector('textarea');
-    function showTextArea() {
-        textArea.classList.remove('hidden');
-        textArea.style.display = textAreaDisplayProperties;
-        utils.resizeTextarea(textArea);
-        textArea.focus();
-        preview.style.display = 'none';
-    }
+    preview.addEventListener("dblclick", () => {
+        console.log("preview:", preview);
+        showTextArea(preview, textArea);
+    });
     ['click', 'focus'].forEach(e => {
-        preview.addEventListener(e, showTextArea);
+        preview.addEventListener(e, () => {
+            if (textArea.getAttribute("data-role-type") != "assistant")
+                showTextArea(preview, textArea);
+        });
     });
 }
 addMessageButton.addEventListener('click', () => {
     addMessage();
 });
-function drawButtonEventListener(drawButton) {
-    drawButton.addEventListener('click', async (e) => {
+function copyButtonEventListener(btn) {
+    btn.addEventListener('click', async (e) => {
+        if (e.target) {
+            const el = e.target.closest(".chat-box");
+            if (!el)
+                return;
+            const txt = el.querySelector("textarea.message-text").value;
+            utils.copyTextToClipboard(txt);
+            var msg = true ? 'Copied!' : 'Whoops, not copied!';
+            // @ts-ignore
+            $(btn).attr('data-bs-title', msg).tooltip('show');
+            // setTimeout(() => {
+            //   // @ts-ignore
+            //   $(btn).attr('data-bs-title', "copy to clipboard");
+            // }, 2000);
+        }
+    });
+}
+function drawButtonEventListener(btn) {
+    btn.addEventListener('click', async (e) => {
         if (e.target) {
             const el = e.target.closest(".chat-box");
             if (!el)
                 return;
             const txt = el.querySelector("textarea.message-text").value;
             const drawEl = el.querySelector(".draw-container .drawings");
-            drawButton.disabled = true;
+            btn.disabled = true;
             await draw(txt, drawEl);
-            drawButton.disabled = false;
+            btn.disabled = false;
         }
     });
 }
-window.addEventListener('resize', () => {
-    textAreas.forEach(utils.resizeTextarea);
-});
+// window.addEventListener('resize', () => {
+//   textAreas.forEach(utils.resizeTextarea);
+// });
 function textAreaEventListeners(textarea) {
-    textarea.addEventListener('input', e => {
-        utils.resizeTextarea(textarea);
-    });
-    textarea.addEventListener('focus', e => {
-        utils.resizeTextarea(textarea);
-    });
+    // textarea.addEventListener('input', e => {
+    //   utils.resizeTextarea(textarea);
+    // });
+    // textarea.addEventListener('focus', e => {
+    //   utils.resizeTextarea(textarea);
+    // });
     textarea.addEventListener('keydown', e => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
             e.preventDefault();
             submitForm(e);
         }
     });
+    textarea.addEventListener('focus', e => {
+        console.log("focus");
+        //@ts-ignore
+        autosize.update(textarea);
+    });
+    //@ts-ignore
+    autosize(textarea);
     textarea.addEventListener('blur', () => {
+        console.log("blur");
         const preview = textarea.parentElement?.querySelector('.preview');
         preview.style.display = textAreaDisplayProperties;
         setPreviewHTML(preview, textarea);
@@ -148,6 +182,7 @@ function switchRoleEventListeners(switchRole) {
         const txtArea = switchRole.parentElement?.querySelector('textarea');
         if (txtArea) {
             txtArea.placeholder = getRole(newRole).placeholder;
+            txtArea.setAttribute("data-role-type", newRole);
             const previewDiv = switchRole.parentElement?.querySelector('.preview');
             if (previewDiv)
                 setPreviewHTML(previewDiv, txtArea);
@@ -196,6 +231,7 @@ async function draw(txt, drawEl) {
     }
 }
 function addMessage(message = '', setAsAssistant = false) {
+    console.log("addMessage");
     const allRoles = document.querySelectorAll('.role-switch');
     const lastRoleType = allRoles[allRoles.length - 1]?.getAttribute('data-role-type') || assistantRole;
     const isUser = lastRoleType === userRole;
@@ -219,6 +255,7 @@ function addMessage(message = '', setAsAssistant = false) {
     deleteMessageButton.setAttribute('title', 'Delete Message');
     messageDeleteButtonEventListener(deleteMessageButton);
     const messageInput = document.createElement('textarea');
+    messageInput.setAttribute('data-role-type', newRole);
     messageInput.className = 'form-control message-text';
     messageInput.placeholder = setAsAssistant ? 'Fetching response...' : getRole(newRole).placeholder;
     messageInput.setAttribute('aria-label', 'message');
@@ -226,11 +263,21 @@ function addMessage(message = '', setAsAssistant = false) {
     messageInput.setAttribute('spellcheck', 'false');
     textAreaEventListeners(messageInput);
     inputGroup.append(switchRoleButton, messageInput, deleteMessageButton);
+    // <button type="button" class=""></button>
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "btn form-button copy-btn btn-dark";
+    copyBtn.innerHTML = `copy <span class="fas fa-clipboard"></span>`;
+    copyBtn.type = "button";
+    copyBtn.setAttribute('data-toggle', "tooltip");
+    copyBtn.setAttribute('data-placement', "top");
+    copyBtn.setAttribute('title', "Copy to clipboard");
+    inputGroup.append(copyBtn);
+    copyButtonEventListener(copyBtn);
     const drawContainer = document.createElement("div");
     drawContainer.className = "input-group draw-container";
     const drawBtn = document.createElement("button");
     drawBtn.type = "button";
-    drawBtn.className = "btn form-button draw-btn";
+    drawBtn.className = "btn form-button draw-btn btn-dark";
     drawBtn.title = "Draw a pic";
     drawBtn.innerText = "Draw 🖼️";
     const drawings = document.createElement("div");

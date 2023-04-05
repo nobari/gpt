@@ -42,8 +42,10 @@ export async function openAIChatComplete(gptData: chatGPT, textArea: HTMLTextAre
 
       jsonStrings = jsonStrings.map(str => str.trim()).filter(str => str.length > 0);
 
-      textArea.classList.remove('hidden');
-      previewDiv.classList.add('hidden');
+      // textArea.classList.remove('hidden');
+      // previewDiv.classList.add('hidden');
+      textArea.classList.add('hidden');
+      previewDiv.classList.remove('hidden');
 
       for (let i = 0; i < jsonStrings.length; i++) {
         const responseData = JSON.parse(jsonStrings[i]);
@@ -61,6 +63,14 @@ export async function openAIChatComplete(gptData: chatGPT, textArea: HTMLTextAre
 
     const onDone = () => {
       updateTextAreaAndPreview(textArea, previewDiv, responseText, true);
+      try {
+        //@ts-ignore
+        gtag('event', 'gpt_submit', {
+          'event_category': 'user_input',
+          'event_label': 'textbox_content',
+          'value': responseText // Pass the content of the textbox as the event value
+        });
+      } catch (e) { console.log("gpt gtag error:", e) }
     };
 
     const read: any = () => {
@@ -98,15 +108,15 @@ function updateTextAreaAndPreview(
   textArea.value = textArea.value.trimStart();
   // @ts-ignore
   previewDiv.innerHTML = getPreviewHtml(textArea.value);
-  resizeTextarea(textArea);
-  textArea.scrollHeight;
+  // resizeTextarea(textArea);
+  // textArea.scrollHeight;
   if (responseComplete) {
     textArea.value = error ? text : text.trim();
     // @ts-ignore
     previewDiv.innerHTML = getPreviewHtml(textArea.value);
-    resizeTextarea(textArea);
-    textArea.classList.add('hidden');
-    previewDiv.classList.remove('hidden');
+    // resizeTextarea(textArea);
+    // textArea.classList.add('hidden');
+    // previewDiv.classList.remove('hidden');
   }
 }
 

@@ -1,5 +1,5 @@
 import { chatGPT } from './classes.js';
-import { resizeTextarea, getPreviewHtml } from './utils.js';
+import { getPreviewHtml } from './utils.js';
 let reader;
 export function stopStream() {
     console.log('Reader is: ' + reader);
@@ -32,8 +32,10 @@ export async function openAIChatComplete(gptData, textArea) {
                 return str;
             });
             jsonStrings = jsonStrings.map(str => str.trim()).filter(str => str.length > 0);
-            textArea.classList.remove('hidden');
-            previewDiv.classList.add('hidden');
+            // textArea.classList.remove('hidden');
+            // previewDiv.classList.add('hidden');
+            textArea.classList.add('hidden');
+            previewDiv.classList.remove('hidden');
             for (let i = 0; i < jsonStrings.length; i++) {
                 const responseData = JSON.parse(jsonStrings[i]);
                 const choices = responseData.choices;
@@ -49,6 +51,17 @@ export async function openAIChatComplete(gptData, textArea) {
         };
         const onDone = () => {
             updateTextAreaAndPreview(textArea, previewDiv, responseText, true);
+            try {
+                //@ts-ignore
+                gtag('event', 'gpt_submit', {
+                    'event_category': 'user_input',
+                    'event_label': 'textbox_content',
+                    'value': responseText // Pass the content of the textbox as the event value
+                });
+            }
+            catch (e) {
+                console.log("gpt gtag error:", e);
+            }
         };
         const read = () => {
             return reader?.read().then(({ done, value }) => {
@@ -78,15 +91,15 @@ function updateTextAreaAndPreview(textArea, previewDiv, text, responseComplete =
     textArea.value = textArea.value.trimStart();
     // @ts-ignore
     previewDiv.innerHTML = getPreviewHtml(textArea.value);
-    resizeTextarea(textArea);
-    textArea.scrollHeight;
+    // resizeTextarea(textArea);
+    // textArea.scrollHeight;
     if (responseComplete) {
         textArea.value = error ? text : text.trim();
         // @ts-ignore
         previewDiv.innerHTML = getPreviewHtml(textArea.value);
-        resizeTextarea(textArea);
-        textArea.classList.add('hidden');
-        previewDiv.classList.remove('hidden');
+        // resizeTextarea(textArea);
+        // textArea.classList.add('hidden');
+        // previewDiv.classList.remove('hidden');
     }
 }
 export default openAIChatComplete;

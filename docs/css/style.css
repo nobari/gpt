@@ -11691,6 +11691,7 @@ a {
 }
 .chat-box .draw-container {
   flex-direction: column;
+  text-align: center;
 }
 
 .api-key-text {

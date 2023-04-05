@@ -9,7 +9,7 @@ export function getAPIKey() {
   if (encryptedString) {
     try {
       const decryptedString = crypto.decrypt(encryptedString);
-      console.log("apid:", decryptedString);
+      // console.log("api:", decryptedString);
       return decryptedString;
     } catch (error) {
       console.log('Error decrypting API key: ' + error);
