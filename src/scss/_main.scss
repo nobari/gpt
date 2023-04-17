@@ -82,8 +82,10 @@ a {
     }
   }
   .draw-container {
-    flex-direction: column;
-    text-align: center;
+    justify-content: center;
+    // .draw-btn{
+    //   margin: 2px auto;
+    // }
   }
 }
 
@@ -175,6 +177,10 @@ textarea.form-control.message-text {
 .preview p:last-child {
   margin-bottom: 0 !important;
   padding-bottom: 0 !important;
+}
+.preview table {
+  overflow: scroll;
+  display: block;
 }
 
 .form-control:focus {

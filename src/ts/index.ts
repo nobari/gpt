@@ -223,7 +223,7 @@ async function draw(txt: string, drawEl: HTMLDivElement) {
     ids.push(imgId);
     const el = document.createElement("div");
     el.className = "col-md-6 img-wrapper";
-    el.innerHTML = `<div class="card"><img id="${imgId}" src="imgs/loading.gif" class="card-img-top" alt="image ${imgNum}:${txt}"><div class="card-body">
+    el.innerHTML = `<div class="card"><img id="${imgId}" src="imgs/loading.gif" class="card-img-top" alt="image ${imgNum}"><div class="card-body">
     <p class="card-text">
     <button class="btn btn-outline-success btn-circle" type="button" onclick="downloadImage(this.parentElement.parentElement.parentElement);"><span class="fas fa-download"></span></button>
     ${imgNum}
