@@ -7,6 +7,10 @@ import { openAIChatComplete, stopStream } from './openAI.js';
 import * as exports from './export.js';
 import { decrypt, encrypt } from './cryptography.js';
 
+const enc = encrypt("test", "key");
+const dec = decrypt(enc, "key");
+console.log(`test enc:${enc} dec:${dec}`)
+
 const chatgpt = new chatGPT();
 const dalle = new dallE();
 const systemRole = chatGPT.roles.system.role;
@@ -46,7 +50,7 @@ while (!GLOBAL_CONFIGS.apiKey.length) {
   const key = window.prompt("pass");
   try {
     if (key) {
-      const enced = "U2FsdGVkX1/9lgY/dvhQbDC4jQW5jZo0XI6bBS9KzorJka0uOSjLYmn/LwuA3V9L6PERQZbvEoMwI1KPDCWY16AU1wgeOboU6RJRTk5D5DQ="
+      const enced = "U2FsdGVkX191tOhkch/GOGF2k/QbWZepuXLStK+VMLg3VMt9TBJFAxoPalIPSc7FPrqVNuwKaRKRNJtFmPup5S74pXUvm0SSIotwD2Ib9Ps="
       const api = decrypt(enced, key);
       if (!api) {
         window.location.reload();
@@ -368,6 +372,4 @@ const downloadPythonButton = document.getElementById('downloadPython') as HTMLBu
 downloadPythonButton.addEventListener('click', e => {
   exports.downloadPython(getMessages(), chatgpt.model);
 });
-// const enc = encrypt("hello", "key");
-// const dec = decrypt(enc, "key");
-// console.log(`enc:${enc} dec:${dec}`)
+
