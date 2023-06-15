@@ -1,6 +1,6 @@
 import * as crypto from './cryptography.js';
-const LOCAL_STORAGE_API_KEY = 'chatGPTPlaygroundAPIKey';
-const LOCAL_STORAGE_MODEL_KEY = 'chatGPTPlaygroundModel';
+const LOCAL_STORAGE_API_KEY = 'sapataAPIKey';
+const LOCAL_STORAGE_MODEL_KEY = 'sapataModel';
 // Get the API key from local storage
 export function getAPIKey() {
     const encryptedString = localStorage.getItem(LOCAL_STORAGE_API_KEY);

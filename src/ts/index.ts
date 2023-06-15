@@ -7,10 +7,9 @@ import { openAIChatComplete, stopStream } from './openAI.js';
 import * as exports from './export.js';
 import { decrypt, encrypt } from './cryptography.js';
 
-const enc = encrypt("test", "key");
-const dec = decrypt(enc, "key");
-console.log(`test enc:${enc} dec:${dec}`)
-
+// const enc = encrypt("test", "key");
+// const dec = decrypt(enc, "key");
+// console.log(`test enc:${enc} dec:${dec}`)
 const chatgpt = new chatGPT();
 const dalle = new dallE();
 const systemRole = chatGPT.roles.system.role;
@@ -50,7 +49,7 @@ while (!GLOBAL_CONFIGS.apiKey.length) {
   const key = window.prompt("pass");
   try {
     if (key) {
-      const enced = "U2FsdGVkX191tOhkch/GOGF2k/QbWZepuXLStK+VMLg3VMt9TBJFAxoPalIPSc7FPrqVNuwKaRKRNJtFmPup5S74pXUvm0SSIotwD2Ib9Ps="
+      const enced = "U2FsdGVkX1/YibryM+XhHegTNH5l3yDaw5NGvzfw1m1uwdRskl86vcBsTlrhbB5kuL8DqGfVWHT+JXPPI9YUVRARrwwmuXnFRA2BkHt/9cY="
       const api = decrypt(enced, key);
       if (!api) {
         window.location.reload();

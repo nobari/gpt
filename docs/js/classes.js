@@ -17,7 +17,7 @@ export class payloadMessage {
 }
 export class chatGPT {
     constructor() {
-        this.model = 'gpt-4-0314' || "gpt-3.5-turbo";
+        this.model = 'gpt-4-0613' || 'gpt-4-32k' || "gpt-3.5-turbo";
         this.stream = true;
         /**
          * What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.
