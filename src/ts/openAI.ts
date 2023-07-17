@@ -1,10 +1,10 @@
-import { chatGPT, dallE } from './classes.js';
-import { resizeTextarea, getPreviewHtml } from './utils.js';
+import { chatGPT } from "./classes.js";
+import { resizeTextarea, getPreviewHtml } from "./utils.js";
 
 let reader: ReadableStreamDefaultReader | undefined;
 
 export function stopStream() {
-  console.log('Reader is: ' + reader);
+  console.log("Reader is: " + reader);
 
   if (reader) {
     reader.cancel();
@@ -12,7 +12,7 @@ export function stopStream() {
 }
 
 export async function openAIChatComplete(gptData: chatGPT, textArea: HTMLTextAreaElement) {
-  const previewDiv = textArea.parentElement?.querySelector('.preview') as HTMLDivElement;
+  const previewDiv = textArea.parentElement?.querySelector(".preview") as HTMLDivElement;
   const url = gptData.endPoint;
   const requestData = gptData.getRequestData();
   let response;
@@ -27,25 +27,25 @@ export async function openAIChatComplete(gptData: chatGPT, textArea: HTMLTextAre
     }
 
     reader = response.body?.getReader();
-    let responseText = '';
+    let responseText = "";
 
     const onData = (chunk: BufferSource | undefined) => {
       const textDecoder = new TextDecoder();
       const jsonString = textDecoder.decode(chunk, { stream: true });
-      let jsonStrings = jsonString.split('data:');
-      jsonStrings = jsonStrings.map(str => {
-        if (str.includes('[DONE]')) {
-          return str.replace('[DONE]', '');
+      let jsonStrings = jsonString.split("data:");
+      jsonStrings = jsonStrings.map((str) => {
+        if (str.includes("[DONE]")) {
+          return str.replace("[DONE]", "");
         }
         return str;
       });
 
-      jsonStrings = jsonStrings.map(str => str.trim()).filter(str => str.length > 0);
+      jsonStrings = jsonStrings.map((str) => str.trim()).filter((str) => str.length > 0);
 
       // textArea.classList.remove('hidden');
       // previewDiv.classList.add('hidden');
-      textArea.classList.add('hidden');
-      previewDiv.classList.remove('hidden');
+      textArea.classList.add("hidden");
+      previewDiv.classList.remove("hidden");
 
       for (let i = 0; i < jsonStrings.length; i++) {
         const responseData = JSON.parse(jsonStrings[i]);
@@ -65,12 +65,14 @@ export async function openAIChatComplete(gptData: chatGPT, textArea: HTMLTextAre
       updateTextAreaAndPreview(textArea, previewDiv, responseText, true);
       try {
         //@ts-ignore
-        gtag('event', 'gpt_submit', {
-          'event_category': 'user_input',
-          'event_label': 'textbox_content',
-          'value': responseText // Pass the content of the textbox as the event value
+        gtag("event", "gpt_submit", {
+          event_category: "user_input",
+          event_label: "textbox_content",
+          value: responseText, // Pass the content of the textbox as the event value
         });
-      } catch (e) { console.log("gpt gtag error:", e) }
+      } catch (e) {
+        console.log("gpt gtag error:", e);
+      }
     };
 
     const read: any = () => {
@@ -93,17 +95,11 @@ export async function openAIChatComplete(gptData: chatGPT, textArea: HTMLTextAre
     console.log(errorMsg);
     return { result: false, response: errorMsg };
   } finally {
-    textArea.placeholder = chatGPT.roles['assistant'].placeholder;
+    textArea.placeholder = chatGPT.roles["assistant"].placeholder;
   }
 }
 
-function updateTextAreaAndPreview(
-  textArea: HTMLTextAreaElement,
-  previewDiv: HTMLDivElement,
-  text: string,
-  responseComplete: boolean = false,
-  error: boolean = false
-) {
+function updateTextAreaAndPreview(textArea: HTMLTextAreaElement, previewDiv: HTMLDivElement, text: string, responseComplete: boolean = false, error: boolean = false) {
   textArea.value += text;
   textArea.value = textArea.value.trimStart();
   // @ts-ignore

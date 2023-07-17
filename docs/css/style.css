@@ -11692,6 +11692,9 @@ a {
 .chat-box .draw-container {
   justify-content: center;
 }
+.chat-box .draw-container .draw-btn {
+  margin-right: 20px;
+}
 
 .api-key-text {
   padding-right: 1rem !important;
