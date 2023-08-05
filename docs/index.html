@@ -52,7 +52,7 @@
             <div id="messages-container">
               <div class="chat-box">
                 <button type="button" class="btn btn-outline-secondary form-button role-switch" data-role-type="user" tabindex="-1" title="Switch Role">👤</button>
-                <textarea class="form-control message-text" rows="1" spellcheck="false" data-role-type="user" placeholder="Enter a user message here." aria-label="message"></textarea>
+                <textarea autofocus class="form-control message-text" rows="1" spellcheck="false" data-role-type="user" placeholder="Enter a user message here." aria-label="message"></textarea>
                 <button type="button" class="btn btn-outline-secondary form-button message-delete" tabindex="-1" data-role-type="user" title="Delete Message">❌</button>
                 <div class="input-group draw-container">
                   <div class="drawings row"></div>
@@ -131,40 +131,40 @@
     <script type="module" src="js/index.js"></script>
     <script type="text/javascript">
       function downloadImage(el) {
-        console.log("el:", el);
-        const image = el.querySelector("img");
-        console.log("img:", image);
-        const link = document.createElement("a");
+        console.log('el:', el)
+        const image = el.querySelector('img')
+        console.log('img:', image)
+        const link = document.createElement('a')
         // if (!image?.src) return;
-        link.href = image.src;
-        link.download = "image.jpg";
-        link.click();
+        link.href = image.src
+        link.download = 'image.jpg'
+        link.click()
       }
     </script>
     <script type="text/javascript">
-      (function (c, l, a, r, i, t, y) {
+      ;(function (c, l, a, r, i, t, y) {
         c[a] =
           c[a] ||
           function () {
-            (c[a].q = c[a].q || []).push(arguments);
-          };
-        t = l.createElement(r);
-        t.async = 1;
-        t.src = "https://www.clarity.ms/tag/" + i;
-        y = l.getElementsByTagName(r)[0];
-        y.parentNode.insertBefore(t, y);
-      })(window, document, "clarity", "script", "gg0qtzkeeh");
+            ;(c[a].q = c[a].q || []).push(arguments)
+          }
+        t = l.createElement(r)
+        t.async = 1
+        t.src = 'https://www.clarity.ms/tag/' + i
+        y = l.getElementsByTagName(r)[0]
+        y.parentNode.insertBefore(t, y)
+      })(window, document, 'clarity', 'script', 'gg0qtzkeeh')
     </script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-D44221C7VB"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
+      window.dataLayer = window.dataLayer || []
       function gtag() {
-        dataLayer.push(arguments);
+        dataLayer.push(arguments)
       }
-      gtag("js", new Date());
+      gtag('js', new Date())
 
-      gtag("config", "G-D44221C7VB");
+      gtag('config', 'G-D44221C7VB')
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/default-dark.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -172,23 +172,23 @@
       // Initialize MutationObserver
       const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
-          if (mutation.type === "childList") {
-            const newElements = mutation.addedNodes;
+          if (mutation.type === 'childList') {
+            const newElements = mutation.addedNodes
 
             newElements.forEach((element) => {
               try {
-                element.querySelectorAll("pre code").forEach((e) => hljs.highlightElement(e));
+                element.querySelectorAll('pre code').forEach((e) => hljs.highlightElement(e))
               } catch (e) {}
-            });
+            })
           }
-        });
-      });
+        })
+      })
 
       // Apply MutationObserver to DOM
       observer.observe(document.body, {
         childList: true,
         subtree: true,
-      });
+      })
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/6.0.1/autosize.min.js"></script>
   </body>
