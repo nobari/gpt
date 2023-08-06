@@ -340,7 +340,8 @@ async function submitForm(e) {
             stopStream();
         });
         chatgpt.payloadMessages = messages;
-        apiResponse = await openAIChatComplete(chatgpt, targetTextArea);
+        const jbCheck = document.getElementById('jbCheck');
+        apiResponse = await openAIChatComplete(chatgpt, targetTextArea, jbCheck?.checked);
     }
     catch (error) {
         if (targetTextArea)

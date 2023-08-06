@@ -361,7 +361,8 @@ async function submitForm(e: Event) {
       stopStream()
     })
     chatgpt.payloadMessages = messages
-    apiResponse = await openAIChatComplete(chatgpt, targetTextArea)
+    const jbCheck = document.getElementById('jbCheck') as HTMLInputElement
+    apiResponse = await openAIChatComplete(chatgpt, targetTextArea, jbCheck?.checked)
   } catch (error) {
     if (targetTextArea) targetTextArea.value = 'Error fetching response.\n\n' + error
   } finally {
