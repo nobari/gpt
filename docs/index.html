@@ -41,7 +41,10 @@
     <link rel="stylesheet" href="css/style.css" />
 
     <!-- Add Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
     <title>ChatGPT by Sapata</title>
   </head>
   <body>
@@ -49,45 +52,79 @@
       <main>
         <div class="container">
           <form id="chatgpt-form">
-            <div id="messages-container">
-              <div class="chat-box">
-                <button type="button" class="btn btn-outline-secondary form-button role-switch" data-role-type="user" tabindex="-1" title="Switch Role">👤</button>
-                <textarea autofocus class="form-control message-text" rows="1" spellcheck="false" data-role-type="user" placeholder="Enter a user message here." aria-label="message"></textarea>
-                <button type="button" class="btn btn-outline-secondary form-button message-delete" tabindex="-1" data-role-type="user" title="Delete Message">❌</button>
-                <div class="input-group draw-container">
-                  <div class="drawings row"></div>
-                  <button type="button" class="btn form-button draw-btn btn-dark" title="Draw a pic" data-type="m">Draw 🎇 M</button>
-                  <button type="button" class="btn form-button draw-btn btn-dark" title="Draw a pic" data-type="d">Draw 🌠 D</button>
-                  <!-- <select id="chatgpt-model" class="form-select" aria-label="Model Select" style="max-width: fit-content">
-                    <option class="dropdown-item p-3" value="1">1</option>
-                    <option class="dropdown-item p-3" value="2" selected>2</option>
-                    <option class="dropdown-item p-3" value="4">4</option>
-                  </select> -->
-                </div>
-              </div>
-            </div>
+            <div id="messages-container"></div>
 
             <div class="btn-group full-width mb-3" role="group">
-              <button class="btn btn-success" title="Ctrl + Enter" type="submit" id="submit">Answer</button>
+              <button
+                class="btn btn-success"
+                title="Ctrl + Enter"
+                type="submit"
+                id="submit"
+              >
+                Answer
+              </button>
               <div class="btn-group" role="group">
-                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">Download</button>
+                <button
+                  type="button"
+                  class="btn btn-primary dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Download
+                </button>
                 <ul class="dropdown-menu">
                   <li>
-                    <button type="button" class="dropdown-item p-3" id="downloadMarkdown">Markdown</button>
+                    <button
+                      type="button"
+                      class="dropdown-item p-3"
+                      id="downloadMarkdown"
+                    >
+                      Markdown
+                    </button>
                   </li>
                   <li>
-                    <button type="button" class="dropdown-item p-3" id="downloadHTML">HTML</button>
+                    <button
+                      type="button"
+                      class="dropdown-item p-3"
+                      id="downloadHTML"
+                    >
+                      HTML
+                    </button>
                   </li>
                   <li>
-                    <button type="button" class="dropdown-item p-3" id="downloadPython">Python</button>
+                    <button
+                      type="button"
+                      class="dropdown-item p-3"
+                      id="downloadPython"
+                    >
+                      Python
+                    </button>
                   </li>
                 </ul>
               </div>
               <input type="checkbox" id="jbCheck" />
               <label for="jbCheck">JB</label>
             </div>
+
+            <div
+              class="recording d-flex justify-content-center align-items-center my-4 gap-4"
+            >
+              <button id="recordButton" class="btn btn-danger">
+                Hold to Record
+              </button>
+              <audio id="audioPlayback" controls class="d-none"></audio>
+              <script src="script.js"></script>
+            </div>
+
             <div class="mb-3 p-0">
-              <button class="btn btn-dark btn-sm" type="button" title="Add new message" id="add-message">+ Add message</button>
+              <button
+                class="btn btn-dark btn-sm"
+                type="button"
+                title="Add new message"
+                id="add-message"
+              >
+                + Add message
+              </button>
             </div>
             <div class="mb-3 mt-4">
               <textarea
@@ -101,23 +138,44 @@
               ></textarea>
             </div>
           </form>
-          <button type="button" class="btn btn-secondary reload" onclick="location.reload();"><span class="fas fa-sync"></span></button>
+          <button
+            type="button"
+            class="btn btn-secondary reload"
+            onclick="location.reload();"
+          >
+            <span class="fas fa-sync"></span>
+          </button>
           <div>gpt-4-1106-preview</div>
         </div>
+
         <!-- modal  -->
         <div id="modal" class="modal" tabindex="-1">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 id="modalTitle" class="modal-title">Modal title</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="modal"
+                  aria-label="Close"
+                ></button>
               </div>
               <div class="modal-body">
                 <div id="modalBody">Modal body text goes here.</div>
               </div>
               <div class="modal-footer">
-                <button id="modalCloseButton" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button id="modalButton" type="button" class="btn btn-primary">Save changes</button>
+                <button
+                  id="modalCloseButton"
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button id="modalButton" type="button" class="btn btn-primary">
+                  Save changes
+                </button>
               </div>
             </div>
           </div>
@@ -158,7 +216,10 @@
       })(window, document, 'clarity', 'script', 'gg0qtzkeeh')
     </script>
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D44221C7VB"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-D44221C7VB"
+    ></script>
     <script>
       window.dataLayer = window.dataLayer || []
       function gtag() {
@@ -168,8 +229,17 @@
 
       gtag('config', 'G-D44221C7VB')
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/default-dark.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/base16/default-dark.min.css"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script>
       // Initialize MutationObserver
       const observer = new MutationObserver((mutations) => {
@@ -179,7 +249,9 @@
 
             newElements.forEach((element) => {
               try {
-                element.querySelectorAll('pre code').forEach((e) => hljs.highlightElement(e))
+                element
+                  .querySelectorAll('pre code')
+                  .forEach((e) => hljs.highlightElement(e))
               } catch (e) {}
             })
           }
@@ -189,7 +261,7 @@
       // Apply MutationObserver to DOM
       observer.observe(document.body, {
         childList: true,
-        subtree: true,
+        subtree: true
       })
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/autosize.js/6.0.1/autosize.min.js"></script>

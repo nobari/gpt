@@ -1,5 +1,5 @@
 body {
-  font-family: "Josefin Sans", sans-serif;
+  font-family: 'Josefin Sans', sans-serif;
 }
 
 h1 {
@@ -22,7 +22,7 @@ a {
 }
 
 .navbar-brand {
-  font-family: "Kaushan Script", cursive;
+  font-family: 'Kaushan Script', cursive;
   font-size: xx-large;
   font-weight: 500;
   color: #fd6c3f !important;
@@ -153,7 +153,7 @@ pre {
   vertical-align: bottom;
   -webkit-animation: ellipsis steps(4, end) 900ms infinite;
   animation: ellipsis steps(4, end) 900ms infinite;
-  content: "\2026"; /* ascii code for the ellipsis character */
+  content: '\2026'; /* ascii code for the ellipsis character */
   width: 0px;
 }
 
@@ -210,4 +210,12 @@ header {
   height: 40px;
   border-radius: 20px;
   margin: 0 5px;
+}
+
+.recording {
+  #recordButton {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+  }
 }

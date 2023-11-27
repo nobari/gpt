@@ -5,6 +5,7 @@ import * as utils from './utils.js';
 import { openAIChatComplete, stopStream } from './openAI.js';
 import * as exports from './export.js';
 import { decrypt } from './cryptography.js';
+import { setRecorder } from './rec.js';
 // const enc = encrypt("test", "key");
 // const dec = decrypt(enc, "key");
 // console.log(`test enc:${enc} dec:${dec}`)
@@ -181,7 +182,9 @@ function textAreaEventListeners(textarea) {
 function setPreviewHTML(preview, textarea) {
     //@ts-ignore
     const parsedMarkdown = utils.getPreviewHtml(textarea.value);
-    const previewHtml = textarea.value.trim() ? `<div>${parsedMarkdown}</div>` : `<span class="text-muted">${textarea.placeholder}</span>`;
+    const previewHtml = textarea.value.trim()
+        ? `<div>${parsedMarkdown}</div>`
+        : `<span class="text-muted">${textarea.placeholder}</span>`;
     preview.innerHTML = previewHtml;
 }
 function switchRoleEventListeners(switchRole) {
@@ -242,68 +245,114 @@ async function draw(txt, drawEl, type = 'd') {
         console.log('error images:', e);
     }
 }
-function addMessage(message = '', setAsAssistant = false) {
+function addMessage(message = '', setAsAssistant) {
     console.log('addMessage');
-    const allRoles = document.querySelectorAll('.role-switch');
-    const lastRoleType = allRoles[allRoles.length - 1]?.getAttribute('data-role-type') || assistantRole;
-    const isUser = lastRoleType === userRole;
-    const newRole = setAsAssistant ? assistantRole : isUser ? assistantRole : userRole;
-    const inputGroup = document.createElement('div');
-    inputGroup.className = 'chat-box';
-    const switchRoleButton = document.createElement('button');
-    switchRoleButton.className = 'btn btn-outline-secondary role-switch form-button';
-    switchRoleButton.setAttribute('data-role-type', newRole);
-    switchRoleButton.setAttribute('type', 'button');
-    switchRoleButton.setAttribute('title', 'Switch Role');
-    switchRoleButton.tabIndex = -1;
-    switchRoleButton.textContent = getIcon(newRole);
-    switchRoleEventListeners(switchRoleButton);
-    const deleteMessageButton = document.createElement('button');
-    deleteMessageButton.className = 'btn btn-outline-secondary message-delete form-button';
-    const cross = String.fromCharCode(0x274c);
-    deleteMessageButton.textContent = cross;
-    deleteMessageButton.tabIndex = -1;
-    deleteMessageButton.setAttribute('type', 'button');
-    deleteMessageButton.setAttribute('title', 'Delete Message');
-    messageDeleteButtonEventListener(deleteMessageButton);
-    document.querySelectorAll('.message-text[autofocus]').forEach((d) => d.removeAttribute('autofocus'));
-    const messageInput = document.createElement('textarea');
-    messageInput.setAttribute('data-role-type', newRole);
-    messageInput.className = 'form-control message-text';
-    messageInput.autofocus = true;
-    messageInput.placeholder = setAsAssistant ? 'Fetching response...' : getRole(newRole).placeholder;
-    messageInput.setAttribute('aria-label', 'message');
-    messageInput.setAttribute('rows', '1');
-    messageInput.setAttribute('spellcheck', 'false');
-    textAreaEventListeners(messageInput);
-    inputGroup.append(switchRoleButton, messageInput, deleteMessageButton);
-    // <button type="button" class=""></button>
-    const copyBtn = document.createElement('button');
-    copyBtn.className = 'btn form-button copy-btn btn-dark';
-    copyBtn.innerHTML = `copy <span class="fas fa-clipboard"></span>`;
-    copyBtn.type = 'button';
-    copyBtn.setAttribute('data-toggle', 'tooltip');
-    copyBtn.setAttribute('data-placement', 'top');
-    copyBtn.setAttribute('title', 'Copy to clipboard');
-    inputGroup.append(copyBtn);
-    copyButtonEventListener(copyBtn);
-    const drawContainer = document.createElement('div');
-    drawContainer.className = 'input-group draw-container';
-    const drawings = document.createElement('div');
-    drawings.className = 'drawings row';
-    drawContainer.append(drawings);
-    for (const type of ['m', 'd']) {
-        const drawBtn = document.createElement('button');
-        drawBtn.type = 'button';
-        drawBtn.className = 'btn form-button draw-btn btn-dark';
-        drawBtn.title = 'Draw a pic';
-        drawBtn.dataset.type = type;
-        drawBtn.innerText = type == 'm' ? 'Draw 🎇 M' : 'Draw 🌠 D';
-        drawContainer.append(drawBtn);
-        drawButtonEventListener(drawBtn);
+    let chatboxs = messagesContainer.querySelectorAll('.chat-box');
+    let newRole = setAsAssistant ? assistantRole : userRole;
+    let lastChatBox = undefined, messageInput = undefined;
+    if (chatboxs.length > 0) {
+        lastChatBox = chatboxs[chatboxs.length - 1];
+        if (typeof setAsAssistant === 'undefined') {
+            const lastRoleType = lastChatBox
+                .querySelector('.role-switch')
+                .getAttribute('data-role-type') || assistantRole;
+            const isUser = lastRoleType === userRole;
+            newRole = isUser ? assistantRole : userRole;
+        }
     }
-    inputGroup.append(drawContainer);
-    messagesContainer.append(inputGroup);
+    // const allRoles = document.querySelectorAll('.role-switch')
+    // const lastRoleType =
+    //   allRoles[allRoles.length - 1]?.getAttribute('data-role-type') ||
+    //   assistantRole
+    // const isUser = lastRoleType === userRole
+    // const newRole = setAsAssistant
+    //   ? assistantRole
+    //   : isUser
+    //   ? assistantRole
+    //   : userRole
+    if (lastChatBox &&
+        lastChatBox.querySelector('textarea')?.value.trim().length == 0) {
+        messageInput = lastChatBox.querySelector('textarea');
+    }
+    else {
+        const inputGroup = document.createElement('div');
+        inputGroup.className = 'chat-box';
+        const switchRoleButton = document.createElement('button');
+        switchRoleButton.className =
+            'btn btn-outline-secondary role-switch form-button';
+        switchRoleButton.setAttribute('data-role-type', newRole);
+        switchRoleButton.setAttribute('type', 'button');
+        switchRoleButton.setAttribute('title', 'Switch Role');
+        switchRoleButton.tabIndex = -1;
+        switchRoleButton.textContent = getIcon(newRole);
+        switchRoleEventListeners(switchRoleButton);
+        const deleteMessageButton = document.createElement('button');
+        deleteMessageButton.className =
+            'btn btn-outline-secondary message-delete form-button';
+        const cross = String.fromCharCode(0x274c);
+        deleteMessageButton.textContent = cross;
+        deleteMessageButton.tabIndex = -1;
+        deleteMessageButton.setAttribute('type', 'button');
+        deleteMessageButton.setAttribute('title', 'Delete Message');
+        messageDeleteButtonEventListener(deleteMessageButton);
+        document
+            .querySelectorAll('.message-text[autofocus]')
+            .forEach((d) => d.removeAttribute('autofocus'));
+        messageInput = document.createElement('textarea');
+        messageInput.setAttribute('data-role-type', newRole);
+        messageInput.className = 'form-control message-text';
+        messageInput.autofocus = true;
+        messageInput.placeholder = setAsAssistant
+            ? 'Fetching response...'
+            : getRole(newRole).placeholder;
+        messageInput.setAttribute('aria-label', 'message');
+        messageInput.setAttribute('rows', '1');
+        messageInput.setAttribute('spellcheck', 'false');
+        textAreaEventListeners(messageInput);
+        inputGroup.append(switchRoleButton, messageInput, deleteMessageButton);
+        // <button type="button" class=""></button>
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'btn form-button copy-btn btn-dark';
+        copyBtn.innerHTML = `copy <span class="fas fa-clipboard"></span>`;
+        copyBtn.type = 'button';
+        copyBtn.setAttribute('data-toggle', 'tooltip');
+        copyBtn.setAttribute('data-placement', 'top');
+        copyBtn.setAttribute('title', 'Copy to clipboard');
+        inputGroup.append(copyBtn);
+        copyButtonEventListener(copyBtn);
+        // Create the play button
+        const playButton = document.createElement('button');
+        playButton.id = 'playButton';
+        playButton.className = 'btn form-button play-btn btn-dark';
+        playButton.innerHTML = '<span class="fas fa-play"></span>';
+        playButton.type = 'button';
+        playButton.title = 'Play';
+        // Create the audio element
+        const audioPlayer = document.createElement('audio');
+        audioPlayer.id = 'audioPlayer';
+        audioPlayer.style.display = 'none';
+        // Add event listener to the play button
+        playButton.addEventListener('click', playAudio);
+        inputGroup.append(playButton);
+        inputGroup.append(audioPlayer);
+        const drawContainer = document.createElement('div');
+        drawContainer.className = 'input-group draw-container';
+        const drawings = document.createElement('div');
+        drawings.className = 'drawings row';
+        drawContainer.append(drawings);
+        for (const type of ['m', 'd']) {
+            const drawBtn = document.createElement('button');
+            drawBtn.type = 'button';
+            drawBtn.className = 'btn form-button draw-btn btn-dark';
+            drawBtn.title = 'Draw a pic';
+            drawBtn.dataset.type = type;
+            drawBtn.innerText = type == 'm' ? 'Draw 🎇 M' : 'Draw 🌠 D';
+            drawContainer.append(drawBtn);
+            drawButtonEventListener(drawBtn);
+        }
+        inputGroup.append(drawContainer);
+        messagesContainer.append(inputGroup);
+    }
     messageInput.value = message;
     messageInput.dispatchEvent(new Event('input', { bubbles: true }));
     createPreviewDiv(messageInput);
@@ -364,3 +413,37 @@ const downloadPythonButton = document.getElementById('downloadPython');
 downloadPythonButton.addEventListener('click', (e) => {
     exports.downloadPython(getMessages(), chatgpt.model);
 });
+setRecorder();
+// Listen to the 'recorded' event and log the URL
+document.addEventListener('recorded', async function (event) {
+    const src = event.detail.audioUrl;
+    const file = event.detail.audioFile;
+    console.log('Recorded audio URL:');
+    const res = await chatgpt.stt(file);
+    if (res) {
+        const text = res.text;
+        addMessage(text, false);
+    }
+});
+async function playAudio(event) {
+    const element = event.target;
+    const chatBox = element.closest('.chat-box');
+    const playButton = chatBox.querySelector('#playButton');
+    const audioPlayer = chatBox.querySelector('#audioPlayer');
+    const textArea = chatBox.querySelector('textarea');
+    const text = textArea.value.trim();
+    console.log('text:', text);
+    // Disable the button
+    playButton.disabled = true;
+    // Change the icon to a loading icon
+    // buttonIcon.src = 'loading-icon.png' // Path to loading icon
+    const audioUrl = await chatgpt.tts(text);
+    // Hide the play button icon
+    playButton.style.display = 'none';
+    // Show and play the audio
+    audioPlayer.src = audioUrl;
+    audioPlayer.controls = true;
+    audioPlayer.style.display = 'block';
+    audioPlayer.play();
+}
+addMessage();

@@ -11813,4 +11813,10 @@ header {
   margin: 0 5px;
 }
 
+.recording #recordButton {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+
 /*# sourceMappingURL=style.css.map */

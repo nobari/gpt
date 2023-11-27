@@ -80,6 +80,77 @@ export class chatGPT {
       })
     }
   }
+
+  stt(audioFile: File) {
+    const model = 'whisper-1'
+
+    const formData = new FormData()
+    formData.append('file', audioFile)
+    formData.append('model', model)
+    return fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${GLOBAL_CONFIGS.apiKey}`
+      },
+      body: formData
+    })
+      .then(async (resp) => {
+        const data = await resp.json()
+        // Handle the transcription response
+        console.log('transcriptions:', data)
+        return data as { text: string }
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.error(error)
+        alert(error)
+      })
+  }
+  async tts(text: string) {
+    const url = 'https://api.openai.com/v1/audio/speech'
+
+    const options: RequestInit = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${GLOBAL_CONFIGS.apiKey}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        model: 'tts-1',
+        input: text,
+        voice: 'alloy' || 'echo' || 'fable' || 'onyx' || 'nova' || 'shimmer',
+        response_format: 'mp3' || 'wav' || 'ogg' || 'flac',
+        speed:
+          1 ||
+          0.25 ||
+          0.5 ||
+          0.75 ||
+          1.25 ||
+          1.5 ||
+          1.75 ||
+          2 ||
+          2.25 ||
+          2.5 ||
+          2.75 ||
+          3 ||
+          3.25 ||
+          3.5 ||
+          3.75 ||
+          4
+      })
+    }
+
+    const response = await fetch(url, options)
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+
+    const blob = await response.blob()
+
+    const objectURL = URL.createObjectURL(blob)
+    return objectURL
+  }
 }
 
 /**
