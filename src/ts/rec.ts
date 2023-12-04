@@ -44,7 +44,12 @@ export function setRecorder() {
   }
 
   function stopRecording() {
-    mediaRecorder!.stop()
+    if (!mediaRecorder) {
+      console.error('MediaRecorder is not defined')
+      return
+    }
+    mediaRecorder.stream.getTracks().forEach((track) => track.stop())
+    mediaRecorder.stop()
   }
 
   recordButton.addEventListener('mousedown', function () {

@@ -75,7 +75,7 @@ textAreas.forEach((t, i) => {
 });
 // textAreas.forEach(createPreviewDiv)
 function setPreviewDiv(textArea) {
-    let previewDiv = textArea.parentNode?.querySelector(".preview");
+    let previewDiv = textArea.parentNode?.querySelector('.preview');
     if (!previewDiv) {
         previewDiv = document.createElement('div');
         previewDiv.classList.add('preview');
@@ -93,12 +93,13 @@ function setPreviewDiv(textArea) {
     return previewDiv;
 }
 function showTextArea(preview, textArea) {
-    console.log('showTextArea');
+    console.log('showTextArea:', textArea);
     textArea.classList.remove('hidden');
     textArea.style.display = textAreaDisplayProperties;
     // utils.resizeTextarea(textArea);
     textArea.focus();
-    preview.style.display = 'none';
+    if (textArea)
+        preview.style.display = 'none';
 }
 function previewEventListeners(preview) {
     const textArea = preview.parentElement?.querySelector('textarea');
@@ -177,8 +178,10 @@ function textAreaEventListeners(textarea) {
     textarea.addEventListener('blur', () => {
         console.log('blur');
         const preview = textarea.parentElement?.querySelector('.preview');
-        preview.style.display = textAreaDisplayProperties;
+        preview.style.display = ''; //textAreaDisplayProperties
+        preview.classList.remove('hidden');
         setPreviewHTML(preview, textarea);
+        console.log('blur:', textAreaDisplayProperties);
         textarea.style.display = 'none';
     });
 }
@@ -260,7 +263,8 @@ function addMessage(message = '', setAsAssistant) {
                 .querySelector('.role-switch')
                 .getAttribute('data-role-type') || assistantRole;
             const isUser = lastRoleType === userRole;
-            newRole = isUser ? assistantRole : userRole;
+            if (typeof setAsAssistant != 'undefined')
+                newRole = isUser ? assistantRole : userRole;
         }
     }
     // const allRoles = document.querySelectorAll('.role-switch')
@@ -453,7 +457,3 @@ async function playAudio(event) {
     audioPlayer.play();
 }
 addMessage();
-// document.querySelector('button')?.focus()
-// setTimeout(() => {
-//   addMessage('text', false)
-// }, 1000)

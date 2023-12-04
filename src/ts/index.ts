@@ -100,7 +100,9 @@ textAreas.forEach((t, i) => {
 // textAreas.forEach(createPreviewDiv)
 
 function setPreviewDiv(textArea: HTMLTextAreaElement) {
-  let previewDiv = textArea.parentNode?.querySelector(".preview") as HTMLDivElement
+  let previewDiv = textArea.parentNode?.querySelector(
+    '.preview'
+  ) as HTMLDivElement
   if (!previewDiv) {
     previewDiv = document.createElement('div')
     previewDiv.classList.add('preview')
@@ -119,12 +121,12 @@ function setPreviewDiv(textArea: HTMLTextAreaElement) {
 }
 
 function showTextArea(preview: HTMLDivElement, textArea: HTMLTextAreaElement) {
-  console.log('showTextArea')
+  console.log('showTextArea:', textArea)
   textArea.classList.remove('hidden')
   textArea.style.display = textAreaDisplayProperties
   // utils.resizeTextarea(textArea);
   textArea.focus()
-  preview.style.display = 'none'
+  if (textArea) preview.style.display = 'none'
 }
 function previewEventListeners(preview: HTMLDivElement) {
   const textArea = preview.parentElement?.querySelector(
@@ -208,8 +210,10 @@ function textAreaEventListeners(textarea: HTMLTextAreaElement) {
     const preview = textarea.parentElement?.querySelector(
       '.preview'
     ) as HTMLDivElement
-    preview.style.display = textAreaDisplayProperties
+    preview.style.display = '' //textAreaDisplayProperties
+    preview.classList.remove('hidden')
     setPreviewHTML(preview, textarea)
+    console.log('blur:', textAreaDisplayProperties)
     textarea.style.display = 'none'
   })
 }
@@ -309,7 +313,8 @@ function addMessage(message = '', setAsAssistant?: boolean) {
           .querySelector('.role-switch')!
           .getAttribute('data-role-type') || assistantRole
       const isUser = lastRoleType === userRole
-      newRole = isUser ? assistantRole : userRole
+      if (typeof setAsAssistant != 'undefined')
+        newRole = isUser ? assistantRole : userRole
     }
   }
 
@@ -535,7 +540,3 @@ async function playAudio(event: any) {
 }
 
 addMessage()
-// document.querySelector('button')?.focus()
-// setTimeout(() => {
-//   addMessage('text', false)
-// }, 1000)
