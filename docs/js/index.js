@@ -71,15 +71,18 @@ textAreas.forEach((t, i) => {
     console.log('eee:', i, textAreas.length);
     if (i == textAreas.length - 2)
         return;
-    createPreviewDiv(t);
+    setPreviewDiv(t);
 });
 // textAreas.forEach(createPreviewDiv)
-function createPreviewDiv(textArea) {
-    const previewDiv = document.createElement('div');
-    previewDiv.classList.add('preview');
-    previewDiv.style.display = textAreaDisplayProperties;
-    previewDiv.tabIndex = 0;
-    textArea.parentElement?.insertBefore(previewDiv, textArea);
+function setPreviewDiv(textArea) {
+    let previewDiv = textArea.parentNode?.querySelector(".preview");
+    if (!previewDiv) {
+        previewDiv = document.createElement('div');
+        previewDiv.classList.add('preview');
+        previewDiv.style.display = textAreaDisplayProperties;
+        previewDiv.tabIndex = 0;
+        textArea.parentElement?.insertBefore(previewDiv, textArea);
+    }
     const classes = textArea.classList;
     classes.forEach((c) => {
         previewDiv.classList.add(c);
@@ -272,91 +275,96 @@ function addMessage(message = '', setAsAssistant) {
     //   : userRole
     if (lastChatBox &&
         lastChatBox.querySelector('textarea')?.value.trim().length == 0) {
+        console.log('editing last message');
         messageInput = lastChatBox.querySelector('textarea');
+        messageInput.value = message;
+        const preview = setPreviewDiv(messageInput);
+        if (newRole == userRole)
+            showTextArea(preview, messageInput);
+        return messageInput;
     }
-    else {
-        const inputGroup = document.createElement('div');
-        inputGroup.className = 'chat-box';
-        const switchRoleButton = document.createElement('button');
-        switchRoleButton.className =
-            'btn btn-outline-secondary role-switch form-button';
-        switchRoleButton.setAttribute('data-role-type', newRole);
-        switchRoleButton.setAttribute('type', 'button');
-        switchRoleButton.setAttribute('title', 'Switch Role');
-        switchRoleButton.tabIndex = -1;
-        switchRoleButton.textContent = getIcon(newRole);
-        switchRoleEventListeners(switchRoleButton);
-        const deleteMessageButton = document.createElement('button');
-        deleteMessageButton.className =
-            'btn btn-outline-secondary message-delete form-button';
-        const cross = String.fromCharCode(0x274c);
-        deleteMessageButton.textContent = cross;
-        deleteMessageButton.tabIndex = -1;
-        deleteMessageButton.setAttribute('type', 'button');
-        deleteMessageButton.setAttribute('title', 'Delete Message');
-        messageDeleteButtonEventListener(deleteMessageButton);
-        document
-            .querySelectorAll('.message-text[autofocus]')
-            .forEach((d) => d.removeAttribute('autofocus'));
-        messageInput = document.createElement('textarea');
-        messageInput.setAttribute('data-role-type', newRole);
-        messageInput.className = 'form-control message-text';
-        messageInput.autofocus = true;
-        messageInput.placeholder = setAsAssistant
-            ? 'Fetching response...'
-            : getRole(newRole).placeholder;
-        messageInput.setAttribute('aria-label', 'message');
-        messageInput.setAttribute('rows', '1');
-        messageInput.setAttribute('spellcheck', 'false');
-        textAreaEventListeners(messageInput);
-        inputGroup.append(switchRoleButton, messageInput, deleteMessageButton);
-        // <button type="button" class=""></button>
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'btn form-button copy-btn btn-dark';
-        copyBtn.innerHTML = `copy <span class="fas fa-clipboard"></span>`;
-        copyBtn.type = 'button';
-        copyBtn.setAttribute('data-toggle', 'tooltip');
-        copyBtn.setAttribute('data-placement', 'top');
-        copyBtn.setAttribute('title', 'Copy to clipboard');
-        inputGroup.append(copyBtn);
-        copyButtonEventListener(copyBtn);
-        // Create the play button
-        const playButton = document.createElement('button');
-        playButton.id = 'playButton';
-        playButton.className = 'btn form-button play-btn btn-dark';
-        playButton.innerHTML = '<span class="fas fa-play"></span>';
-        playButton.type = 'button';
-        playButton.title = 'Play';
-        // Create the audio element
-        const audioPlayer = document.createElement('audio');
-        audioPlayer.id = 'audioPlayer';
-        audioPlayer.style.display = 'none';
-        // Add event listener to the play button
-        playButton.addEventListener('click', playAudio);
-        inputGroup.append(playButton);
-        inputGroup.append(audioPlayer);
-        const drawContainer = document.createElement('div');
-        drawContainer.className = 'input-group draw-container';
-        const drawings = document.createElement('div');
-        drawings.className = 'drawings row';
-        drawContainer.append(drawings);
-        for (const type of ['m', 'd']) {
-            const drawBtn = document.createElement('button');
-            drawBtn.type = 'button';
-            drawBtn.className = 'btn form-button draw-btn btn-dark';
-            drawBtn.title = 'Draw a pic';
-            drawBtn.dataset.type = type;
-            drawBtn.innerText = type == 'm' ? 'Draw 🎇 M' : 'Draw 🌠 D';
-            drawContainer.append(drawBtn);
-            drawButtonEventListener(drawBtn);
-        }
-        inputGroup.append(drawContainer);
-        messagesContainer.append(inputGroup);
+    const inputGroup = document.createElement('div');
+    inputGroup.className = 'chat-box';
+    const switchRoleButton = document.createElement('button');
+    switchRoleButton.className =
+        'btn btn-outline-secondary role-switch form-button';
+    switchRoleButton.setAttribute('data-role-type', newRole);
+    switchRoleButton.setAttribute('type', 'button');
+    switchRoleButton.setAttribute('title', 'Switch Role');
+    switchRoleButton.tabIndex = -1;
+    switchRoleButton.textContent = getIcon(newRole);
+    switchRoleEventListeners(switchRoleButton);
+    const deleteMessageButton = document.createElement('button');
+    deleteMessageButton.className =
+        'btn btn-outline-secondary message-delete form-button';
+    const cross = String.fromCharCode(0x274c);
+    deleteMessageButton.textContent = cross;
+    deleteMessageButton.tabIndex = -1;
+    deleteMessageButton.setAttribute('type', 'button');
+    deleteMessageButton.setAttribute('title', 'Delete Message');
+    messageDeleteButtonEventListener(deleteMessageButton);
+    document
+        .querySelectorAll('.message-text[autofocus]')
+        .forEach((d) => d.removeAttribute('autofocus'));
+    messageInput = document.createElement('textarea');
+    messageInput.setAttribute('data-role-type', newRole);
+    messageInput.className = 'form-control message-text';
+    messageInput.autofocus = true;
+    messageInput.placeholder = setAsAssistant
+        ? 'Fetching response...'
+        : getRole(newRole).placeholder;
+    messageInput.setAttribute('aria-label', 'message');
+    messageInput.setAttribute('rows', '1');
+    messageInput.setAttribute('spellcheck', 'false');
+    textAreaEventListeners(messageInput);
+    inputGroup.append(switchRoleButton, messageInput, deleteMessageButton);
+    // <button type="button" class=""></button>
+    const copyBtn = document.createElement('button');
+    copyBtn.className = 'btn form-button copy-btn btn-dark';
+    copyBtn.innerHTML = `copy <span class="fas fa-clipboard"></span>`;
+    copyBtn.type = 'button';
+    copyBtn.setAttribute('data-toggle', 'tooltip');
+    copyBtn.setAttribute('data-placement', 'top');
+    copyBtn.setAttribute('title', 'Copy to clipboard');
+    inputGroup.append(copyBtn);
+    copyButtonEventListener(copyBtn);
+    // Create the play button
+    const playButton = document.createElement('button');
+    playButton.id = 'playButton';
+    playButton.className = 'btn form-button play-btn btn-dark';
+    playButton.innerHTML = '<span class="fas fa-play"></span>';
+    playButton.type = 'button';
+    playButton.title = 'Play';
+    // Create the audio element
+    const audioPlayer = document.createElement('audio');
+    audioPlayer.id = 'audioPlayer';
+    audioPlayer.style.display = 'none';
+    // Add event listener to the play button
+    playButton.addEventListener('click', playAudio);
+    inputGroup.append(playButton);
+    inputGroup.append(audioPlayer);
+    const drawContainer = document.createElement('div');
+    drawContainer.className = 'input-group draw-container';
+    const drawings = document.createElement('div');
+    drawings.className = 'drawings row';
+    drawContainer.append(drawings);
+    for (const type of ['m', 'd']) {
+        const drawBtn = document.createElement('button');
+        drawBtn.type = 'button';
+        drawBtn.className = 'btn form-button draw-btn btn-dark';
+        drawBtn.title = 'Draw a pic';
+        drawBtn.dataset.type = type;
+        drawBtn.innerText = type == 'm' ? 'Draw 🎇 M' : 'Draw 🌠 D';
+        drawContainer.append(drawBtn);
+        drawButtonEventListener(drawBtn);
     }
+    inputGroup.append(drawContainer);
     messageInput.value = message;
+    messagesContainer.append(inputGroup);
     messageInput.dispatchEvent(new Event('input', { bubbles: true }));
-    createPreviewDiv(messageInput);
-    return messageInput;
+    const preview = setPreviewDiv(messageInput);
+    if (newRole == userRole)
+        showTextArea(preview, messageInput);
 }
 function getMessages() {
     const messages = [];
@@ -398,9 +406,7 @@ async function submitForm(e) {
     }
     finally {
         utils.removeSpinner();
-        let lastMessage = targetTextArea;
-        if (apiResponse?.result)
-            lastMessage = addMessage();
+        let lastMessage = apiResponse?.result ? addMessage() : targetTextArea;
         if (lastMessage)
             lastMessage.focus();
     }
@@ -447,3 +453,7 @@ async function playAudio(event) {
     audioPlayer.play();
 }
 addMessage();
+// document.querySelector('button')?.focus()
+// setTimeout(() => {
+//   addMessage('text', false)
+// }, 1000)
