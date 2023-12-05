@@ -11,15 +11,20 @@ export function stopStream() {
   }
 }
 
-export async function openAIChatComplete(gptData: chatGPT, textArea: HTMLTextAreaElement, toJB: boolean = false) {
-  const previewDiv = textArea.parentElement?.querySelector('.preview') as HTMLDivElement
+export async function openAIChatComplete(
+  gptData: chatGPT,
+  textArea: HTMLTextAreaElement,
+  toJB: boolean = false
+) {
+  const previewDiv = textArea.parentElement?.querySelector(
+    '.preview'
+  ) as HTMLDivElement
   const url = gptData.endPoint
   const requestData = gptData.getRequestData(toJB)
   let response
 
   try {
     response = await fetch(url, requestData)
-
     // check for response errors
     if (!response.ok) {
       const error = await response.json()
@@ -40,7 +45,9 @@ export async function openAIChatComplete(gptData: chatGPT, textArea: HTMLTextAre
         return str
       })
 
-      jsonStrings = jsonStrings.map((str) => str.trim()).filter((str) => str.length > 0)
+      jsonStrings = jsonStrings
+        .map((str) => str.trim())
+        .filter((str) => str.length > 0)
 
       // textArea.classList.remove('hidden');
       // previewDiv.classList.add('hidden');
@@ -68,7 +75,7 @@ export async function openAIChatComplete(gptData: chatGPT, textArea: HTMLTextAre
         gtag('event', 'gpt_submit', {
           event_category: 'user_input',
           event_label: 'textbox_content',
-          value: responseText, // Pass the content of the textbox as the event value
+          value: responseText // Pass the content of the textbox as the event value
         })
       } catch (e) {
         console.log('gpt gtag error:', e)
@@ -99,7 +106,13 @@ export async function openAIChatComplete(gptData: chatGPT, textArea: HTMLTextAre
   }
 }
 
-function updateTextAreaAndPreview(textArea: HTMLTextAreaElement, previewDiv: HTMLDivElement, text: string, responseComplete: boolean = false, error: boolean = false) {
+function updateTextAreaAndPreview(
+  textArea: HTMLTextAreaElement,
+  previewDiv: HTMLDivElement,
+  text: string,
+  responseComplete: boolean = false,
+  error: boolean = false
+) {
   textArea.value += text
   textArea.value = textArea.value.trimStart()
   // @ts-ignore

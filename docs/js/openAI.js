@@ -31,7 +31,9 @@ export async function openAIChatComplete(gptData, textArea, toJB = false) {
                 }
                 return str;
             });
-            jsonStrings = jsonStrings.map((str) => str.trim()).filter((str) => str.length > 0);
+            jsonStrings = jsonStrings
+                .map((str) => str.trim())
+                .filter((str) => str.length > 0);
             // textArea.classList.remove('hidden');
             // previewDiv.classList.add('hidden');
             textArea.classList.add('hidden');
@@ -56,7 +58,7 @@ export async function openAIChatComplete(gptData, textArea, toJB = false) {
                 gtag('event', 'gpt_submit', {
                     event_category: 'user_input',
                     event_label: 'textbox_content',
-                    value: responseText, // Pass the content of the textbox as the event value
+                    value: responseText // Pass the content of the textbox as the event value
                 });
             }
             catch (e) {

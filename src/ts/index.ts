@@ -299,8 +299,6 @@ async function draw(
   }
 }
 function addMessage(message = '', setAsAssistant?: boolean) {
-  console.log('addMessage')
-
   let chatboxs = messagesContainer.querySelectorAll('.chat-box')
   let newRole = setAsAssistant ? assistantRole : userRole
   let lastChatBox: Element = undefined as any,
@@ -433,6 +431,7 @@ function addMessage(message = '', setAsAssistant?: boolean) {
   messageInput.dispatchEvent(new Event('input', { bubbles: true }))
   const preview = setPreviewDiv(messageInput)
   if (newRole == userRole) showTextArea(preview, messageInput)
+  return messageInput
 }
 
 function getMessages(): payloadMessage[] {

@@ -252,7 +252,6 @@ async function draw(txt, drawEl, type = 'd') {
     }
 }
 function addMessage(message = '', setAsAssistant) {
-    console.log('addMessage');
     let chatboxs = messagesContainer.querySelectorAll('.chat-box');
     let newRole = setAsAssistant ? assistantRole : userRole;
     let lastChatBox = undefined, messageInput = undefined;
@@ -369,6 +368,7 @@ function addMessage(message = '', setAsAssistant) {
     const preview = setPreviewDiv(messageInput);
     if (newRole == userRole)
         showTextArea(preview, messageInput);
+    return messageInput;
 }
 function getMessages() {
     const messages = [];
