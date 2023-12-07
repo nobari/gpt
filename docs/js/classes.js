@@ -29,6 +29,7 @@ export class chatGPT {
         this.temperature = 1;
         this.endPoint = 'https://api.openai.com/v1/chat/completions';
         this.payloadMessages = [];
+        document.getElementById('model-name').textContent = this.model;
     }
     getRequestData(toJB = false) {
         try {

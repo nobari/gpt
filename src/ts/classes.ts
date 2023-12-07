@@ -50,6 +50,7 @@ export class chatGPT {
 
   constructor() {
     this.payloadMessages = []
+    document.getElementById('model-name')!.textContent = this.model
   }
 
   getRequestData(toJB: boolean = false) {

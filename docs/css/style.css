@@ -11813,10 +11813,24 @@ header {
   margin: 0 5px;
 }
 
-.recording #recordButton {
-  width: 100px;
-  height: 100px;
+#recordButton {
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 9;
+  padding: 0;
+  text-align: center;
+}
+#recordButton span {
+  width: 40px;
+}
+
+#model-name {
+  padding: 10px 0;
+  height: 50px;
 }
 
 /*# sourceMappingURL=style.css.map */

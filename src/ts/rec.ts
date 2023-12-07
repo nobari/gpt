@@ -1,3 +1,4 @@
+let lastRecStopTime = 0
 export function setRecorder() {
   const recordButton = document.getElementById('recordButton')!
   const audioPlayback = document.getElementById(
@@ -6,15 +7,23 @@ export function setRecorder() {
   let mediaRecorder: MediaRecorder | undefined
   let audioChunks: BlobPart[] = []
   let isRecording = false
-
   function startRecording(stream: MediaStream) {
+    const now = Date.now()
+    console.log('startRecording:' + now)
+    if (now - lastRecStopTime < 1000) {
+      alert("You're recording too fast!")
+      return
+    }
+    isRecording = true
     mediaRecorder = new MediaRecorder(stream)
     if (!mediaRecorder) {
       alert('MediaRecorder is not defined')
       return
     }
     mediaRecorder.start()
-    recordButton.textContent = 'Recording...'
+    recordButton
+      .querySelector('span')
+      ?.classList.replace('fa-microphone', 'fa-circle-stop')
     recordButton.classList.add('btn-success')
     recordButton.classList.remove('btn-danger')
 
@@ -22,7 +31,7 @@ export function setRecorder() {
       audioChunks.push(event.data)
     })
 
-    mediaRecorder.addEventListener('stop', () => {
+    mediaRecorder.addEventListener('stop', function stopped(this) {
       const audioBlob = new Blob(audioChunks, { type: 'audio/wav' })
       const audioUrl = URL.createObjectURL(audioBlob)
       const audioFile = new File([audioBlob], 'filename.wav', {
@@ -34,21 +43,26 @@ export function setRecorder() {
       })
       document.dispatchEvent(recordedEvent)
       audioPlayback.src = audioUrl
+      this.stream.getTracks().forEach((track) => track.stop())
 
       audioPlayback.classList.remove('d-none')
       audioChunks = []
-      recordButton.textContent = 'Hold to Record'
+      recordButton
+        .querySelector('span')
+        ?.classList.replace('fa-circle-stop', 'fa-microphone')
       recordButton.classList.add('btn-danger')
       recordButton.classList.remove('btn-success')
     })
   }
 
   function stopRecording() {
+    const now = Date.now()
+    console.log('stopRecording:' + now)
+    lastRecStopTime = now
     if (!mediaRecorder) {
       console.error('MediaRecorder is not defined')
       return
     }
-    mediaRecorder.stream.getTracks().forEach((track) => track.stop())
     mediaRecorder.stop()
   }
 
@@ -60,7 +74,6 @@ export function setRecorder() {
         .catch((error) => {
           console.error('Error accessing the microphone', error)
         })
-      isRecording = true
     }
   })
 

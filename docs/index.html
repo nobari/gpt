@@ -51,6 +51,9 @@
     <div class="main-layout">
       <main>
         <div class="container">
+          <button id="recordButton" class="btn btn-danger" type="button">
+            <span class="fas fa-microphone"></span>
+          </button>
           <form id="chatgpt-form">
             <div id="messages-container"></div>
 
@@ -109,9 +112,6 @@
             <div
               class="recording d-flex justify-content-center align-items-center my-4 gap-4"
             >
-              <button id="recordButton" class="btn btn-danger">
-                Hold to Record
-              </button>
               <audio id="audioPlayback" controls class="d-none"></audio>
               <script src="script.js"></script>
             </div>
@@ -145,7 +145,7 @@
           >
             <span class="fas fa-sync"></span>
           </button>
-          <div>gpt-4-1106-preview</div>
+          <div id="model-name"></div>
         </div>
 
         <!-- modal  -->
