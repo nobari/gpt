@@ -37,7 +37,9 @@ export async function openAIChatComplete(
     const onData = (chunk: BufferSource | undefined) => {
       const textDecoder = new TextDecoder()
       const jsonString = textDecoder.decode(chunk, { stream: true })
+      console.log('jsonString before split:', jsonString)
       let jsonStrings = jsonString.split('data:')
+      console.log('jsonString after split:', jsonString)
       jsonStrings = jsonStrings.map((str) => {
         if (str.includes('[DONE]')) {
           return str.replace('[DONE]', '')
@@ -48,6 +50,8 @@ export async function openAIChatComplete(
       jsonStrings = jsonStrings
         .map((str) => str.trim())
         .filter((str) => str.length > 0)
+
+      console.log('jsonString after trim:', jsonString)
 
       // textArea.classList.remove('hidden');
       // previewDiv.classList.add('hidden');
@@ -99,7 +103,7 @@ export async function openAIChatComplete(
   } catch (error) {
     const errorMsg = `${error}`
     updateTextAreaAndPreview(textArea, previewDiv, errorMsg, true, true)
-    console.log(errorMsg)
+    console.error(error)
     return { result: false, response: errorMsg }
   } finally {
     textArea.placeholder = chatGPT.roles['assistant'].placeholder
@@ -120,7 +124,7 @@ function updateTextAreaAndPreview(
   // resizeTextarea(textArea);
   // textArea.scrollHeight;
   if (responseComplete) {
-    textArea.value = error ? text : text.trim()
+    textArea.value = error ? textArea.value + `\n\nERROR:${text}` : text.trim()
     // @ts-ignore
     previewDiv.innerHTML = getPreviewHtml(textArea.value)
     // resizeTextarea(textArea);
