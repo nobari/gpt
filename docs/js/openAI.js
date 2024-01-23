@@ -24,7 +24,9 @@ export async function openAIChatComplete(gptData, textArea, toJB = false) {
         const onData = (chunk) => {
             const textDecoder = new TextDecoder();
             const jsonString = textDecoder.decode(chunk, { stream: true });
+            console.log('jsonString before split:', jsonString);
             let jsonStrings = jsonString.split('data:');
+            console.log('jsonString after split:', jsonString);
             jsonStrings = jsonStrings.map((str) => {
                 if (str.includes('[DONE]')) {
                     return str.replace('[DONE]', '');
@@ -34,6 +36,7 @@ export async function openAIChatComplete(gptData, textArea, toJB = false) {
             jsonStrings = jsonStrings
                 .map((str) => str.trim())
                 .filter((str) => str.length > 0);
+            console.log('jsonString after trim:', jsonString);
             // textArea.classList.remove('hidden');
             // previewDiv.classList.add('hidden');
             textArea.classList.add('hidden');
@@ -81,7 +84,7 @@ export async function openAIChatComplete(gptData, textArea, toJB = false) {
     catch (error) {
         const errorMsg = `${error}`;
         updateTextAreaAndPreview(textArea, previewDiv, errorMsg, true, true);
-        console.log(errorMsg);
+        console.error(error);
         return { result: false, response: errorMsg };
     }
     finally {
@@ -96,7 +99,7 @@ function updateTextAreaAndPreview(textArea, previewDiv, text, responseComplete =
     // resizeTextarea(textArea);
     // textArea.scrollHeight;
     if (responseComplete) {
-        textArea.value = error ? text : text.trim();
+        textArea.value = error ? textArea.value + `\n\nERROR:${text}` : text.trim();
         // @ts-ignore
         previewDiv.innerHTML = getPreviewHtml(textArea.value);
         // resizeTextarea(textArea);
