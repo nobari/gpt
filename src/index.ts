@@ -1,17 +1,18 @@
+import './scss/style.scss'
 import {
   chatGPT,
   ImageGen,
   GLOBAL_CONFIGS,
   IMAGE_GEN_TYPES
-} from './classes.js'
-import { payloadMessage } from './classes.js'
-import { payloadRole } from './classes.js'
-import * as manageLS from './manageLocalStorage.js'
-import * as utils from './utils.js'
-import { openAIChatComplete, stopStream } from './openAI.js'
-import * as exports from './export.js'
-import { decrypt, encrypt } from './cryptography.js'
-import { setRecorder } from './rec.js'
+} from './lib/classes'
+import { payloadMessage } from './lib/classes'
+import { payloadRole } from './lib/classes'
+import * as manageLS from './lib/manageLocalStorage'
+import * as utils from './lib/utils'
+import { openAIChatComplete, stopStream } from './lib/openAI'
+import { decrypt, encrypt } from './lib/cryptography'
+import { setRecorder } from './lib/rec'
+import { downloadHTML, downloadMarkdown, downloadPython } from './lib/export'
 
 // const enc = encrypt("test", "key");
 // const dec = decrypt(enc, "key");
@@ -485,19 +486,19 @@ async function submitForm(e: Event) {
 const downloadMarkdownButton = document.getElementById(
   'downloadMarkdown'
 ) as HTMLButtonElement
-downloadMarkdownButton.addEventListener('click', exports.downloadMarkdown)
+downloadMarkdownButton.addEventListener('click', downloadMarkdown)
 
 const downloadHTMLButton = document.getElementById(
   'downloadHTML'
 ) as HTMLButtonElement
-downloadHTMLButton.addEventListener('click', exports.downloadHTML)
+downloadHTMLButton.addEventListener('click', downloadHTML)
 
 const downloadPythonButton = document.getElementById(
   'downloadPython'
 ) as HTMLButtonElement
 
 downloadPythonButton.addEventListener('click', (e) => {
-  exports.downloadPython(getMessages(), chatgpt.model)
+  downloadPython(getMessages(), chatgpt.model)
 })
 
 setRecorder()

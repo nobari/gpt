@@ -1,5 +1,5 @@
-import { chatGPT } from './classes.js'
-import { resizeTextarea, getPreviewHtml } from './utils.js'
+import { chatGPT } from './classes'
+import { resizeTextarea, getPreviewHtml } from './utils'
 
 let reader: ReadableStreamDefaultReader | undefined
 

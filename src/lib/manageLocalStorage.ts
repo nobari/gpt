@@ -1,4 +1,4 @@
-import * as crypto from './cryptography.js';
+import * as crypto from './cryptography';
 
 const LOCAL_STORAGE_API_KEY = 'sapataAPIKey';
 const LOCAL_STORAGE_MODEL_KEY = 'sapataModel';

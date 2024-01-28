@@ -1,5 +1,5 @@
-import * as templates from './templates.js';
-import * as utils from './utils.js';
+import * as templates from './templates';
+import * as utils from './utils';
 
 const htmlTemplate = templates.html;
 const pythonTemplate = templates.python;
