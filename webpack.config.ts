@@ -4,11 +4,11 @@ import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 import CopyWebpackPlugin from 'copy-webpack-plugin'
 import { CleanWebpackPlugin } from 'clean-webpack-plugin'
 import { Configuration } from 'webpack'
-const DIST_FOLDER = 'docs2'
+const DIST_FOLDER = 'docs'
 
 const config = (env: { production: boolean }) =>
-  ({
-    devtool: 'inline-source-map',
+({
+    devtool: env.production ? false : 'inline-source-map',
     mode: env.production ? 'production' : 'development',
     entry: { index: './src/index.ts' },
     module: {

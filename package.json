@@ -4,8 +4,6 @@
   "description": "ChatGPT API playground.",
   "main": "index.ts",
   "scripts": {
-    " tehaiskd ": sl" ewkmfge wk kskjhai cdsavA" evcwij 
-    ":"
     "watch": "webpack --config webpack.config.ts -w",
     "clean": "rm -rf extension",
     "start": "webpack serve --config webpack.config.ts --open",
