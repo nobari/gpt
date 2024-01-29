@@ -1,5 +1,6 @@
 import * as templates from './templates';
 import * as utils from './utils';
+import marked from 'marked';
 
 const htmlTemplate = templates.html;
 const pythonTemplate = templates.python;

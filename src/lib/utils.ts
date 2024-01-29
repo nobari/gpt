@@ -1,3 +1,4 @@
+import marked from 'marked';
 // import { stopStream } from './openAI';
 
 export function resizeTextarea(textarea: HTMLTextAreaElement) {

@@ -1,17 +1,58 @@
-import { chatGPT } from './classes'
+import { Generator } from './classes'
 import { resizeTextarea, getPreviewHtml } from './utils'
 
-let reader: ReadableStreamDefaultReader | undefined
+let stream: Awaited<ReturnType<Generator['nextText']>>
 
 export function stopStream() {
-  console.log('Reader is: ' + reader)
+  console.log('stream is: ', stream)
 
-  if (reader) {
-    reader.cancel()
+  if (stream.controller) {
+    stream.controller.abort()
   }
 }
 
 export async function openAIChatComplete(
+  gen: Generator,
+  textArea: HTMLTextAreaElement,
+  toJB: boolean = false
+) {
+  const previewDiv = textArea.parentElement?.querySelector(
+    '.preview'
+  ) as HTMLDivElement
+
+  try {
+    stream = await gen.nextText(toJB)
+    let responseText = ''
+
+    for await (const chunk of stream) {
+      const text = chunk.choices[0]?.delta?.content || ''
+      responseText += text
+      updateTextAreaAndPreview(textArea, previewDiv, text)
+    }
+
+    const chatCompletion = await stream.finalChatCompletion()
+    console.log(chatCompletion)
+
+    updateTextAreaAndPreview(
+      textArea,
+      previewDiv,
+      chatCompletion.choices[0].message.content!,
+      true
+    )
+
+    return { result: true, response: responseText.trim() }
+  } catch (error) {
+    const errorMsg = `${error}`
+    updateTextAreaAndPreview(textArea, previewDiv, errorMsg, true, true)
+    console.error(error)
+    return { result: false, response: errorMsg }
+  } finally {
+    textArea.placeholder = Generator.roles['assistant'].placeholder
+  }
+}
+
+/*
+export async function openAIChatCompleteManual(
   gptData: chatGPT,
   textArea: HTMLTextAreaElement,
   toJB: boolean = false
@@ -109,6 +150,7 @@ export async function openAIChatComplete(
     textArea.placeholder = chatGPT.roles['assistant'].placeholder
   }
 }
+*/
 
 function updateTextAreaAndPreview(
   textArea: HTMLTextAreaElement,

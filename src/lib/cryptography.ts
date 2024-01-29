@@ -1,3 +1,4 @@
+import CryptoJS from 'crypto-js';
 export function encryptDecrypt(plainOrEncryptedString: string, performEncryption = false, key?: string) {
   try {
     const userHash = generateUserHash(key).toString();

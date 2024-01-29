@@ -1,36 +1,44 @@
 import './scss/style.scss'
-import {
-  chatGPT,
-  ImageGen,
-  GLOBAL_CONFIGS,
-  IMAGE_GEN_TYPES
-} from './lib/classes'
-import { payloadMessage } from './lib/classes'
+import 'bootstrap'
+import { Generator, ImageGen, IMAGE_GEN_TYPES } from './lib/classes'
 import { payloadRole } from './lib/classes'
-import * as manageLS from './lib/manageLocalStorage'
+
 import * as utils from './lib/utils'
 import { openAIChatComplete, stopStream } from './lib/openAI'
-import { decrypt, encrypt } from './lib/cryptography'
 import { setRecorder } from './lib/rec'
 import { downloadHTML, downloadMarkdown, downloadPython } from './lib/export'
+import autosize from 'autosize'
+import hljs from 'highlight.js'
+import { ChatCompletionMessageParam } from 'openai/resources'
+
+document.addEventListener('DOMContentLoaded', (event) => {
+  console.log(
+    'The DOM is fully loaded and parsed, but other resources like images may still be loading.'
+  )
+  addMessage()
+})
+window.addEventListener('load', () => {
+  console.log('Everything is fully loaded, including stylesheets and images.')
+  mutationObserver()
+})
 
 // const enc = encrypt("test", "key");
 // const dec = decrypt(enc, "key");
 // console.log(`test enc:${enc} dec:${dec}`)
-const chatgpt = new chatGPT()
+const chatgpt = new Generator()
 const imageGen = new ImageGen()
-const systemRole = chatGPT.roles.system.role
-const userRole = chatGPT.roles.user.role
-const assistantRole = chatGPT.roles.assistant.role
+const systemRole = Generator.roles.system.role
+const userRole = Generator.roles.user.role
+const assistantRole = Generator.roles.assistant.role
 
 const getRole = (roleString: string) => {
   switch (roleString) {
     case systemRole:
-      return chatGPT.roles.system
+      return Generator.roles.system
     case userRole:
-      return chatGPT.roles.user
+      return Generator.roles.user
     case assistantRole:
-      return chatGPT.roles.assistant
+      return Generator.roles.assistant
     default:
       return new payloadRole('?', '❔', '?', 'Unknown role')
   }
@@ -60,30 +68,6 @@ const addMessageButton = document.querySelector(
 const drawButtons = document.querySelectorAll(
   '.draw-btn'
 ) as NodeListOf<HTMLButtonElement>
-
-// initialize elements
-GLOBAL_CONFIGS.apiKey = manageLS.getAPIKey() || ''
-
-while (!GLOBAL_CONFIGS.apiKey.length) {
-  const key = window.prompt('pass')
-  try {
-    if (key) {
-      const enced =
-        'U2FsdGVkX1/YibryM+XhHegTNH5l3yDaw5NGvzfw1m1uwdRskl86vcBsTlrhbB5kuL8DqGfVWHT+JXPPI9YUVRARrwwmuXnFRA2BkHt/9cY='
-      const api = decrypt(enced, key)
-      if (!api) {
-        window.location.reload()
-      } else {
-        GLOBAL_CONFIGS.apiKey = api
-        manageLS.setAPIKey(api)
-      }
-    } else {
-      window.location.reload()
-    }
-  } catch (e) {
-    window.location.reload()
-  }
-}
 
 textAreas.forEach(textAreaEventListeners)
 textAreas.forEach(utils.resizeTextarea)
@@ -435,13 +419,13 @@ function addMessage(message = '', setAsAssistant?: boolean) {
   return messageInput
 }
 
-function getMessages(): payloadMessage[] {
-  const messages: payloadMessage[] = []
+function getMessages() {
+  const messages: ChatCompletionMessageParam[] = []
   const messageInputs = document.querySelectorAll(
     '#messages-container .chat-box'
   )
   messageInputs.forEach((input) => {
-    const role = input.querySelector('button')?.dataset.roleType ?? ''
+    const role = input.querySelector('button')?.dataset.roleType ?? ('' as any)
     const content = input.querySelector('textarea')?.value ?? ''
     if (!content?.trim()) return
     messages.push({ role, content })
@@ -456,10 +440,6 @@ async function submitForm(e: Event) {
   if (messages.length === 0) return
   let targetTextArea = null
   let apiResponse = null
-  if (!GLOBAL_CONFIGS.apiKey.length) {
-    window.location.reload()
-    return
-  }
   try {
     targetTextArea = addMessage('', true) as HTMLTextAreaElement
     const spinnerDiv = utils.addSpinner(messagesContainer)
@@ -539,4 +519,27 @@ async function playAudio(event: any) {
   audioPlayer.play()
 }
 
-addMessage()
+function mutationObserver() {
+  // Initialize MutationObserver
+  const observer = new MutationObserver((mutations: MutationRecord[]) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'childList') {
+        const newElements = Array.from(mutation.addedNodes) as Element[]
+
+        newElements.forEach((element) => {
+          try {
+            element
+              .querySelectorAll<HTMLElement>('pre code')
+              .forEach((e: HTMLElement) => hljs.highlightElement(e))
+          } catch (e) {}
+        })
+      }
+    })
+  })
+
+  // Apply MutationObserver to DOM
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  })
+}
