@@ -2,6 +2,7 @@ import OpenAI from 'openai'
 import * as manageLS from './manageLocalStorage'
 import { decrypt, encrypt } from './cryptography'
 import { ChatCompletionMessageParam } from 'openai/resources'
+import { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions'
 
 const OPENAI_CONFIGS = {
   apiKey: ''
@@ -51,8 +52,7 @@ const JBLoad: ChatCompletionMessageParam = {
 }
 
 export class Generator {
-  model: string =
-    'gpt-4-1106-preview' || 'gpt-4-0613' || 'gpt-4-32k' || 'gpt-3.5-turbo'
+  model: ChatCompletionCreateParamsBase['model'] = 'gpt-4-0125-preview'
   stream: boolean = true
   /**
    * What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.

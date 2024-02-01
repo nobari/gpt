@@ -1,13 +1,14 @@
+import { ChatCompletionStream } from 'openai/lib/ChatCompletionStream'
 import { Generator } from './classes'
 import { resizeTextarea, getPreviewHtml } from './utils'
 
-let stream: Awaited<ReturnType<Generator['nextText']>>
+let stream: ChatCompletionStream
 
 export function stopStream() {
   console.log('stream is: ', stream)
 
-  if (stream.controller) {
-    stream.controller.abort()
+  if (stream) {
+    stream.abort()
   }
 }
 

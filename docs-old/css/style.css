@@ -11757,7 +11757,7 @@ pre {
   -webkit-animation: ellipsis steps(4, end) 900ms infinite;
   animation: ellipsis steps(4, end) 900ms infinite;
   content: "…"; /* ascii code for the ellipsis character */
-  width: 0px;
+  width: 10px;
 }
 
 @keyframes ellipsis {

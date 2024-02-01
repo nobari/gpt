@@ -185,10 +185,8 @@ function textAreaEventListeners(textarea: HTMLTextAreaElement) {
   })
   textarea.addEventListener('focus', (e) => {
     console.log('focus')
-    //@ts-ignore
     autosize.update(textarea)
   })
-  //@ts-ignore
   autosize(textarea)
   textarea.addEventListener('blur', () => {
     console.log('blur')
